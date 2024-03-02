@@ -1,0 +1,66 @@
+@page "/expenses"
+@using ExpensesTracker.Server.Controllers
+
+@attribute [StreamRendering]
+@inject IWalletController WalletController;
+
+<PageTitle>Expenses</PageTitle>
+<h3>Expenses</h3>
+
+@*<div class="form-group">
+    <a class="btn btn-info" href="AddNewExpense">
+        <i class="oi oi-plus"></i> Add new
+    </a>
+</div>*@
+
+@if (_expenses is null)
+{
+    <div class="align-content-center spinner-border">
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Wallet</th>
+            <th>Category</th>
+            <th>Label</th>
+            <th>Amount</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var entry in _expenses)
+        {
+            <tr>
+                <th>@entry.Date</th>
+                <th>@entry.WalletId</th>
+                <th>@entry.Category</th>
+                <th>@entry.Label</th>
+                <th>@entry.Amount</th>
+                <th>
+                    <a class="btn btn-info" href="editEntry/{@entry.Id}">
+                        <i class="oi oi-pencil"></i>
+                    </a>
+                    <a class="btn btn-danger" href="removeEntity/{@entry.Id}">
+                        <i class="oi oi-trash"></i>
+                    </a>
+                </th>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private IEnumerable<ExpensesEntry> _expenses;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _expenses = await WalletController.GetAllExpenses();
+    }
+
+}
