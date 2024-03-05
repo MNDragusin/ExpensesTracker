@@ -1,5 +1,6 @@
 @page "/expenses"
-@using ExpensesTracker.Server.Controllers
+@using ExpensesTracker.Server.Services
+@using ExpensesTracker.Common.EntityModel.Sqlite
 
 @attribute [StreamRendering]
 @inject IWalletController WalletController;
@@ -37,14 +38,14 @@ else
             <tr>
                 <th>@entry.Date</th>
                 <th>@entry.WalletId</th>
-                <th>@entry.Category</th>
-                <th>@entry.Label</th>
+                <th>@entry.CategoryId</th>
+                <th>@entry.LabelId</th>
                 <th>@entry.Amount</th>
                 <th>
-                    <a class="btn btn-info" href="editEntry/{@entry.Id}">
+                    <a class="btn btn-info" href="editEntry/{@entry.EntryId}">
                         <i class="oi oi-pencil"></i>
                     </a>
-                    <a class="btn btn-danger" href="removeEntity/{@entry.Id}">
+                    <a class="btn btn-danger" href="removeEntity/{@entry.EntryId}">
                         <i class="oi oi-trash"></i>
                     </a>
                 </th>
@@ -56,11 +57,10 @@ else
 
 
 @code {
-    private IEnumerable<ExpensesEntry> _expenses;
+    private IEnumerable<WalletEntry> _expenses;
 
     protected override async Task OnInitializedAsync()
     {
         _expenses = await WalletController.GetAllExpenses();
     }
-
 }

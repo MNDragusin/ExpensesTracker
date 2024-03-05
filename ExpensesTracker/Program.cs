@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ExpensesTracker.Client.Pages;
+using ExpensesTracker.Common.DataContext.Sqlite;
 using ExpensesTracker.Components;
 using ExpensesTracker.Components.Account;
 using ExpensesTracker.Data;
-using ExpensesTracker.Server.Controllers;
+using ExpensesTracker.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 builder.Services.AddScoped<IWalletController, WalletController>();
+builder.Services.AddExpensesContext();
 
 var app = builder.Build();
 
