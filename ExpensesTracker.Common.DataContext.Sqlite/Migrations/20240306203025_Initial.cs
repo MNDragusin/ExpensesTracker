@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,8 +27,7 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
                 name: "WalletEntries",
                 columns: table => new
                 {
-                    EntryId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    EntryId = table.Column<string>(type: "TEXT", nullable: false),
                     WalletId = table.Column<string>(type: "TEXT", nullable: false),
                     Date = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     CategoryId = table.Column<string>(type: "TEXT", nullable: false),

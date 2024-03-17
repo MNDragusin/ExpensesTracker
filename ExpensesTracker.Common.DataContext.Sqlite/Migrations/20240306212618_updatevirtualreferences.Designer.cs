@@ -11,18 +11,19 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
 {
     [DbContext(typeof(ExpensesContext))]
-    [Migration("20240303000457_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240306212618_updatevirtualreferences")]
+    partial class updatevirtualreferences
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
             modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.Category", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -43,6 +44,7 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
             modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.Label", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -77,6 +79,7 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
             modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.Wallet", b =>
                 {
                     b.Property<string>("WalletId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -96,9 +99,9 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
 
             modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.WalletEntry", b =>
                 {
-                    b.Property<int>("EntryId")
+                    b.Property<string>("EntryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<float>("Amount")
                         .HasColumnType("REAL");
@@ -119,6 +122,12 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("EntryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("LabelId");
+
+                    b.HasIndex("WalletId");
 
                     b.ToTable("WalletEntries");
                 });
@@ -150,6 +159,33 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.WalletEntry", b =>
+                {
+                    b.HasOne("ExpensesTracker.Common.EntityModel.Sqlite.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExpensesTracker.Common.EntityModel.Sqlite.Label", "Label")
+                        .WithMany()
+                        .HasForeignKey("LabelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExpensesTracker.Common.EntityModel.Sqlite.Wallet", "Wallet")
+                        .WithMany("Entries")
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Label");
+
+                    b.Navigation("Wallet");
+                });
+
             modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.Owner", b =>
                 {
                     b.Navigation("Categories");
@@ -157,6 +193,11 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
                     b.Navigation("Labels");
 
                     b.Navigation("Wallets");
+                });
+
+            modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.Wallet", b =>
+                {
+                    b.Navigation("Entries");
                 });
 #pragma warning restore 612, 618
         }

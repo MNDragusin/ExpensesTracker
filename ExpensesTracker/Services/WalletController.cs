@@ -1,16 +1,34 @@
+using ExpensesTracker.Common.DataContext.Sqlite;
 using ExpensesTracker.Common.EntityModel.Sqlite;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpensesTracker.Server.Services;
 
 public class WalletController : IWalletController
 {
-    [HttpGet]
-    public async Task<IEnumerable<WalletEntry>> GetAllExpenses()
+    private ExpensesContext _context;
+    public WalletController(ExpensesContext context)
     {
-        //mock
-        await Task.Delay(2000);
-        return GenerateMockData(50);
+        _context = context;
+    }
+    public async Task<IEnumerable<WalletEntry>> GetAllExpenses(string walletId)
+    {
+        return await _context.WalletEntries.Where(entry => entry.WalletId == walletId).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Wallet>> GetWallets(string ownerId)
+    {
+        return await _context.Wallets.Where(wallet => wallet.OwnerId == ownerId).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Category>> GetCategories(string ownerId)
+    {
+        return await _context.Categories.Where(category => category.OwnerId == ownerId).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Label>> GetLabels(string ownerId)
+    {
+        return await _context.Labels.Where(label => label.OwnerId == ownerId).ToListAsync();
     }
 
     private IEnumerable<WalletEntry> GenerateMockData(int count)
@@ -20,7 +38,7 @@ public class WalletController : IWalletController
         {
             mockData.Add(new WalletEntry()
             {
-                EntryId= i,
+                EntryId= i.ToString(),
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(i)),
                 WalletId = "mdWallet",
                 CategoryId = "food",

@@ -8,7 +8,7 @@ public static class ExpensesContextExtensions
     public static IServiceCollection AddExpensesContext(this IServiceCollection services, string relativePath = "..")
     {
         string dbPath = Path.Combine(relativePath, "Expenses.db");
-
+        string currentDir = Environment.CurrentDirectory;
         services.AddDbContext<ExpensesContext>(options =>
         {
             options.UseSqlite($"Data Source={dbPath}");

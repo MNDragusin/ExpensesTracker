@@ -3,6 +3,7 @@ using System;
 using ExpensesTracker.Common.DataContext.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
 {
     [DbContext(typeof(ExpensesContext))]
-    partial class ExpensesContextModelSnapshot : ModelSnapshot
+    [Migration("20240306203025_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -120,12 +123,6 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
 
                     b.HasKey("EntryId");
 
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("LabelId");
-
-                    b.HasIndex("WalletId");
-
                     b.ToTable("WalletEntries");
                 });
 
@@ -156,33 +153,6 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.WalletEntry", b =>
-                {
-                    b.HasOne("ExpensesTracker.Common.EntityModel.Sqlite.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ExpensesTracker.Common.EntityModel.Sqlite.Label", "Label")
-                        .WithMany()
-                        .HasForeignKey("LabelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ExpensesTracker.Common.EntityModel.Sqlite.Wallet", "Wallet")
-                        .WithMany("Entries")
-                        .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Label");
-
-                    b.Navigation("Wallet");
-                });
-
             modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.Owner", b =>
                 {
                     b.Navigation("Categories");
@@ -190,11 +160,6 @@ namespace ExpensesTracker.Common.DataContext.Sqlite.Migrations
                     b.Navigation("Labels");
 
                     b.Navigation("Wallets");
-                });
-
-            modelBuilder.Entity("ExpensesTracker.Common.EntityModel.Sqlite.Wallet", b =>
-                {
-                    b.Navigation("Entries");
                 });
 #pragma warning restore 612, 618
         }

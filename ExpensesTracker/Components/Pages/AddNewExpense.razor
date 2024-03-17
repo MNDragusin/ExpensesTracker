@@ -1,0 +1,36 @@
+@page "/AddNewExpense"
+@using ExpensesTracker.Common.EntityModel.Sqlite
+@using ExpensesTracker.Common.DataContext.Sqlite
+
+@inject ExpensesContext _Context;
+<AuthorizeView>
+<Authorized>
+<h3>AddNewExpense</h3>
+
+<form>
+    <button onclick=""></button>
+</form>
+
+</Authorized>
+</AuthorizeView>
+
+@code {
+    private WalletEntry newEntry { get; set; } = new WalletEntry();
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        _wallets = await WalletController.GetWallets(user.Identity.Name);
+        _labels = await WalletController.GetLabels(user.Identity.Name);
+        _categories = await WalletController.GetCategories(user.Identity.Name);
+    }
+    
+    private void AddNew()
+    {
+        
+    }
+}

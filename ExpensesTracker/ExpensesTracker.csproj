@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ExpensesTracker.Client\ExpensesTracker.Client.csproj" />
+    <PackageReference Include="CsvHelper" Version="31.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
@@ -20,6 +21,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
     <ProjectReference Include="..\ExpensesTracker.Common.DataContext.Sqlite\ExpensesTracker.Common.DataContext.Sqlite.csproj" />
     <ProjectReference Include="..\ExpensesTracker.Common.EntityModel.Sqlite\ExpensesTracker.Common.EntityModel.Sqlite.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\OpenIconic\" />
   </ItemGroup>
 
 </Project>

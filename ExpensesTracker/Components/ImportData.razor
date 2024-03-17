@@ -1,0 +1,60 @@
+@using CsvHelper
+@using System.Globalization
+@using ExpensesTracker.Common.EntityModel.Sqlite
+@using ExpensesTracker.Server.Services
+
+@inject IDataImporter _dataImporter;
+
+@rendermode InteractiveServer
+<AuthorizeView>
+    <Authorized>
+        <h3>Import CSV Data</h3>
+
+        <InputFile OnChange="@LoadFiles" class="form-control"></InputFile>
+        @if (errors.Count > 0)
+        {
+            <h2>Errors</h2>
+            <ul class="text-danger">
+                @foreach (var error in errors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        }
+    </Authorized>
+    </AuthorizeView>
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [Parameter] public EventCallback<IEnumerable<WalletEntry>> OnParseCallback { get; set; }
+    
+    //byte -> kilobyte -> Megabyte 
+    private long _maxFileSize = 1024 * 1024 * 3; //3MB
+    private int _maxAllowdFiles = 1;
+    private List<string> errors = new();
+    
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        errors.Clear();
+        errors.Add("Start processing File");
+        if (e.FileCount > _maxAllowdFiles)
+        {
+            errors.Add($"Error: Attempting to upload {e.FileCount} files, but only {_maxFileSize} files allowed");
+            return;
+        }
+        
+        var file = e.File;
+        if (file.Size > _maxFileSize)
+        {
+            errors.Add($"Error: File {file.Name} is lagerger than the maximum size allowed of {_maxFileSize / 1024/ 1024} ");
+            return;;
+        }
+
+        var user = (await authenticationStateTask).User;
+        
+        var result = await _dataImporter.ParseCSVAsync(file, user.Identity.Name);
+
+        errors.Add("returning list");
+        await OnParseCallback.InvokeAsync(result);
+    }
+}

@@ -5,8 +5,8 @@ namespace ExpensesTracker.Common.EntityModel.Sqlite;
 
 public class Wallet
 {
-    [Key] public string WalletId { get; set; }
-    [ForeignKey("OwnerId")] public string OwnerId { get; set; }
+    [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public string WalletId { get; set; }
+    public string OwnerId { get; set; }
     [Required] public string Name { get; set; }
-    private ICollection<WalletEntry> Entries { get; set; }
+    public virtual ICollection<WalletEntry> Entries { get; set; }
 }

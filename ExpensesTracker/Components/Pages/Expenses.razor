@@ -2,17 +2,22 @@
 @using ExpensesTracker.Server.Services
 @using ExpensesTracker.Common.EntityModel.Sqlite
 
-@attribute [StreamRendering]
 @inject IWalletController WalletController;
+@rendermode InteractiveServer
+@attribute [StreamRendering]
 
 <PageTitle>Expenses</PageTitle>
 <h3>Expenses</h3>
 
-@*<div class="form-group">
+<AuthorizeView>
+<Authorized>
+
+<ImportData OnParseCallback="OnDataImported"/>
+<div class="form-group">
     <a class="btn btn-info" href="AddNewExpense">
         <i class="oi oi-plus"></i> Add new
     </a>
-</div>*@
+</div>
 
 @if (_expenses is null)
 {
@@ -37,16 +42,16 @@ else
         {
             <tr>
                 <th>@entry.Date</th>
-                <th>@entry.WalletId</th>
-                <th>@entry.CategoryId</th>
-                <th>@entry.LabelId</th>
+                <th>@_wallets.FirstOrDefault(w=>w.WalletId == entry.WalletId)!.Name</th>
+                <th>@_categories.FirstOrDefault(c=>c.Id == entry.CategoryId)!.Name</th>
+                <th>@_labels.FirstOrDefault(l=>l.Id == entry.LabelId)!.Name</th>
                 <th>@entry.Amount</th>
                 <th>
                     <a class="btn btn-info" href="editEntry/{@entry.EntryId}">
-                        <i class="oi oi-pencil"></i>
+                        <i class="fluent--pen-20-filled"></i>
                     </a>
                     <a class="btn btn-danger" href="removeEntity/{@entry.EntryId}">
-                        <i class="oi oi-trash"></i>
+                        <i class="ooui--trash"></i>
                     </a>
                 </th>
             </tr>
@@ -54,13 +59,38 @@ else
         </tbody>
     </table>
 }
-
+    </Authorized>
+    </AuthorizeView>
 
 @code {
     private IEnumerable<WalletEntry> _expenses;
+    private IEnumerable<Category> _categories;
+    private IEnumerable<Wallet> _wallets;
+    private IEnumerable<Label> _labels;
 
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
-        _expenses = await WalletController.GetAllExpenses();
+        var user = (await authenticationStateTask).User;
+
+        _wallets = await WalletController.GetWallets(user.Identity.Name);
+        _labels = await WalletController.GetLabels(user.Identity.Name);
+        _categories = await WalletController.GetCategories(user.Identity.Name);
+
+        List<WalletEntry> results = new();
+        foreach (var wallet in _wallets)
+        {
+            var result = (await WalletController.GetAllExpenses(wallet.WalletId));
+            results.AddRange(result);
+        }
+        
+        _expenses = results.OrderBy(p => p.Date);
+    }
+
+    private void OnDataImported(IEnumerable<WalletEntry> entries)
+    {
+        _expenses = entries;
     }
 }

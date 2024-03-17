@@ -5,7 +5,7 @@ namespace ExpensesTracker.Common.EntityModel.Sqlite;
 
 public class Category
 {
-    [Key] public string Id { get; set; }
-    [ForeignKey("OwnerId")] public string OwnerId { get; set; }
+    [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public string Id { get; set; } 
+    public string OwnerId { get; set; }
     [Required] public string Name { get; set; }
 }
