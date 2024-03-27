@@ -1,36 +1,65 @@
+@using ExpensesTracker.Pages
+@inherits AddNewExpenseBase
 @page "/AddNewExpense"
-@using ExpensesTracker.Common.EntityModel.Sqlite
-@using ExpensesTracker.Common.DataContext.Sqlite
+@page "/EditEntry/{Id}"
 
-@inject ExpensesContext _Context;
 <AuthorizeView>
-<Authorized>
-<h3>AddNewExpense</h3>
+    <Authorized>
+        <h3>Add New Expense</h3>
 
-<form>
-    <button onclick=""></button>
-</form>
+        <EditForm class="w-50 p-3" Model="@NewEntry" OnValidSubmit="@Submit" FormName="AddNewWalletEntryForm" Context="formContext">
+            <div class="form-group">
+                <label for="amountInput">Amount</label>
+                <InputNumber class="form-control" id="amountInput" @bind-Value="NewEntry.Amount"/>
+            </div>
 
-</Authorized>
+            <div class="form-group">
+                <label for="dateSelector">Date</label>
+                <InputDate class="form-control" id="dateSelector" @bind-Value="NewEntry.Date" @bind-Value:event="onsubmit"/>
+            </div>
+
+            <div class="form-group">
+                <label for="walletSelector">Wallet</label>
+                <InputSelect @bind-Value="NewEntry.WalletId" class="form-control" id="walletSelector">
+                    @if (_wallets != null)
+                    {
+                        @foreach (var wallet in _wallets)
+                        {
+                            <option value="@wallet.Id">@wallet.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <label for="categorySelector">Category</label>
+                <InputSelect @bind-Value="NewEntry.CategoryId" class="form-control" id="categorySelector">
+                    @if (_categories != null)
+                    {
+                        @foreach (var category in _categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <label for="labelSelector">Label</label>
+                <InputSelect @bind-Value="NewEntry.LabelId" class="form-control" id="labelSelector">
+                    @if (_labels != null)
+                    {
+                        @foreach (var label in _labels)
+                        {
+                            <option value="@label.Id">@label.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <button type="submit" class="btn btn-primary">@_buttonName</button>
+            
+        </EditForm>
+            
+    </Authorized>
 </AuthorizeView>
-
-@code {
-    private WalletEntry newEntry { get; set; } = new WalletEntry();
-
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        var user = (await authenticationStateTask).User;
-
-        _wallets = await WalletController.GetWallets(user.Identity.Name);
-        _labels = await WalletController.GetLabels(user.Identity.Name);
-        _categories = await WalletController.GetCategories(user.Identity.Name);
-    }
-    
-    private void AddNew()
-    {
-        
-    }
-}

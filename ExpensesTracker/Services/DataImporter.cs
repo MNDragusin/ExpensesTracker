@@ -42,7 +42,7 @@ public class DataImporter : IDataImporter
                     csvReader.Context.Configuration.HasHeaderRecord = true;
                     csvReader.Context.Configuration.MissingFieldFound = null;
                     csvReader.Context.Configuration.NewLine = Environment.NewLine;
-
+                    
                     csvReader.Context.RegisterClassMap<WalletEntryMap>();
 
                     while (csvReader.Read())
@@ -118,7 +118,7 @@ public class DataImporter : IDataImporter
             label = (await _expensesContext.Labels.AddAsync(label)).Entity;
         }
 
-        entry.WalletId = wallet.WalletId;
+        entry.WalletId = wallet.Id;
         entry.CategoryId = category.Id;
         entry.LabelId = label.Id;
         var newEntry = new WalletEntry()

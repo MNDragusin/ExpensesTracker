@@ -3,10 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExpensesTracker.Common.EntityModel.Sqlite;
 
-public class Wallet
+public class Wallet : BaseDefinition
 {
-    [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public string WalletId { get; set; }
-    public string OwnerId { get; set; }
-    [Required] public string Name { get; set; }
     public virtual ICollection<WalletEntry> Entries { get; set; }
 }

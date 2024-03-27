@@ -1,0 +1,61 @@
+@using ExpensesTracker.Common.EntityModel.Sqlite
+@using System.ComponentModel
+
+@inject ILogger<BaseDefinitionEditor> Logger
+
+<h3>@Title</h3>
+@if (Definitions != null)
+{
+    <EditForm Model="NewName" FormName="@FormName" OnSubmit="OnSubmit">
+        <InputText @bind-Value="NewName"/>
+        <button type="submit" class="btn btn-primary">+</button>
+    </EditForm>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Edit</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        @foreach (var def in Definitions)
+        {
+            <tr>
+                <th>@def.Name</th>
+                <th>
+                    <button class="btn btn-info">
+                        <i class="fluent--pen-20-filled"></i>
+                    </button>
+
+                    <button class="btn btn-danger">
+                        <i class="ooui--trash"></i>
+                    </button>
+                </th>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public IEnumerable<BaseDefinition> Definitions { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public Action<string>? OnNewDefinition { get; set; }
+
+    private string FormName { get; set; }
+    [SupplyParameterFromForm]
+    private string? NewName { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        FormName = $"New{Title}Form";
+    }
+
+    private void OnSubmit()
+    {
+        Logger.LogInformation($"New {Title} - {NewName}");
+        OnNewDefinition?.Invoke(NewName);
+    }
+}
+

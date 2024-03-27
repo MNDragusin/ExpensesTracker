@@ -70,7 +70,6 @@
         user = await UserAccessor.GetRequiredUserAsync(HttpContext);
         email = await UserManager.GetEmailAsync(user);
         isEmailConfirmed = await UserManager.IsEmailConfirmedAsync(user);
-
         Input.NewEmail ??= email;
     }
 

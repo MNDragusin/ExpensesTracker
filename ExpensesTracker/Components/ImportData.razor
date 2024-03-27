@@ -5,11 +5,10 @@
 
 @inject IDataImporter _dataImporter;
 
-@rendermode InteractiveServer
 <AuthorizeView>
     <Authorized>
-        <h3>Import CSV Data</h3>
-
+        <h5>Import CSV Data</h5>
+        <i class="alert-danger">Out of service</i>
         <InputFile OnChange="@LoadFiles" class="form-control"></InputFile>
         @if (errors.Count > 0)
         {
@@ -35,6 +34,7 @@
     
     private async Task LoadFiles(InputFileChangeEventArgs e)
     {
+        return;
         errors.Clear();
         errors.Add("Start processing File");
         if (e.FileCount > _maxAllowdFiles)
