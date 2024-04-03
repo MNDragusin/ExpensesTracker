@@ -56,6 +56,7 @@
     {
         Logger.LogInformation($"New {Title} - {NewName}");
         OnNewDefinition?.Invoke(NewName);
+        NewName = string.Empty;
     }
 }
 

@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
-using ExpensesTracker.Server.Services;
 using ExpensesTracker.Common.EntityModel.Sqlite;
 using ExpensesTracker.Components.Account;
-
+using ExpensesTracker.Shared;
 
 namespace ExpensesTracker.Pages;
 
 public class AddNewExpenseBase : ComponentBase
 {
-    [Inject] IWalletController WalletController {get;set;}
+    [Inject] IWalletController WalletController { get; set; }
     [Inject] IdentityUserAccessor UserAccessor {get;set;}
     [Inject] NavigationManager NavigationManager { get; set; }
 
@@ -19,6 +18,7 @@ public class AddNewExpenseBase : ComponentBase
     protected IEnumerable<Label>? _labels;
     protected IEnumerable<Category>? _categories;
 
+    protected string CategoryIdSelected {get;set;} = string.Empty;
     protected string _buttonName = "Add new";
     private bool _isEditMode = false;
     

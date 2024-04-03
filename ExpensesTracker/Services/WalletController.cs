@@ -1,6 +1,7 @@
 using ExpensesTracker.Common.DataContext.Sqlite;
 using ExpensesTracker.Common.EntityModel.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using ExpensesTracker.Shared;
 
 namespace ExpensesTracker.Server.Services;
 
@@ -85,45 +86,15 @@ public class WalletController : IWalletController
         return result.Entity;
     }
 
-    public async Task<string> MigrateToNewId(string oldId, string newId)
+    public async Task<bool> DeletWallet(string walletId)
     {
-        try
-        {
-            var owner = _context.Owners.FirstOrDefault(o => o.OwnerId == oldId);
-            Owner newOwner = new Owner()
-            {
-                OwnerId = newId,
-                Name = owner.Name,
-                Wallets = owner.Wallets,
-                Categories = owner.Categories,
-                Labels = owner.Labels
-            };
-            
-            _context.Owners.Remove(owner);
-            await _context.Owners.AddAsync(newOwner);
-            
-            foreach (var wallet in _context.Wallets.Where(w => w.OwnerId == oldId))
-            {
-                wallet.OwnerId = newId;
-            }
-            
-            foreach (var category in _context.Categories.Where(c=>c.OwnerId == oldId))
-            {
-                category.OwnerId = newId;
-            }
-
-            foreach (var label in _context.Labels.Where(l=>l.OwnerId == oldId))
-            {
-                label.OwnerId = newId;
-            }
-            
-            await _context.SaveChangesAsync();
+        var walletToDelete = await _context.Wallets.FirstOrDefaultAsync(w=>w.Id == walletId);
+        if(walletToDelete is null){
+            return false;
         }
-        catch (Exception e)
-        {
-            return e.Message;
-        }
+        
+        _context.Wallets.Remove(walletToDelete);
 
-        return "Migration Complete";
+        return await _context.SaveChangesAsync() == 0 ? false: true;
     }
 }

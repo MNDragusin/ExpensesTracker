@@ -2,6 +2,7 @@
 using ExpensesTracker.Server.Services;
 using ExpensesTracker.Common.EntityModel.Sqlite;
 using ExpensesTracker.Components.Account;
+using ExpensesTracker.Shared;
 
 namespace ExpensesTracker.Pages;
 

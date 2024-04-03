@@ -1,7 +1,7 @@
 
 using ExpensesTracker.Common.EntityModel.Sqlite;
 
-namespace ExpensesTracker.Server.Services;
+namespace ExpensesTracker.Shared;
 
 public interface IWalletController
 {
@@ -18,6 +18,7 @@ public interface IWalletController
     public Task<Label> AddNewLabel(Label newLabel);
     public Task<Category> AddNewCategory(Category newCategory);
     public Task<Wallet> AddNewWallet(Wallet newWallet);
+    public Task<bool> DeletWallet(string walletId);
 
-    public Task<string> MigrateToNewId(string oldId, string newId);
+    //public Task<string> MigrateToNewId(string oldId, string newId);
 }

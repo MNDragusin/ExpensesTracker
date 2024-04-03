@@ -7,7 +7,9 @@
     <Authorized>
         <h3>Add New Expense</h3>
 
-        <EditForm class="w-50 p-3" Model="@NewEntry" OnValidSubmit="@Submit" FormName="AddNewWalletEntryForm" Context="formContext">
+<MudCard class="w-50 p-3">
+    <EditForm Model="@NewEntry" OnValidSubmit="@Submit" FormName="AddNewWalletEntryForm" Context="formContext">
+        <MudCardContent>
             <div class="form-group">
                 <label for="amountInput">Amount</label>
                 <InputNumber class="form-control" id="amountInput" @bind-Value="NewEntry.Amount"/>
@@ -43,6 +45,12 @@
                     }
                 </InputSelect>
             </div>
+            <MudSelect @bind-Value="CategoryIdSelected" Label="Label">
+                @foreach (var item in _categories)
+                {
+                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                }
+            </MudSelect>
 
             <div class="form-group">
                 <label for="labelSelector">Label</label>
@@ -56,10 +64,13 @@
                     }
                 </InputSelect>
             </div>
-
-            <button type="submit" class="btn btn-primary">@_buttonName</button>
-            
-        </EditForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Text" Color="Color.Primary">@_buttonName</MudButton>
+        </MudCardActions>
+    </EditForm>
+</MudCard>
+        
             
     </Authorized>
 </AuthorizeView>

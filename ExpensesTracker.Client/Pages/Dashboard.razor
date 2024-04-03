@@ -1,0 +1,75 @@
+﻿@page "/dashboard"
+@inherits DashboardBase
+@rendermode InteractiveWebAssembly
+@* @rendermode @(new InteractiveWebAssemblyRenderMode(false)) *@
+<AuthorizeView>
+    <Authorized>
+        <h3>Dashboard</h3>
+        
+        @if(ShowLoading){
+            <MudOverlay @bind-Visible="ShowLoading" DarkBackground="true" AutoClose="false">
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+            </MudOverlay>
+        }else{
+            <div class="row">
+
+            <div class="col-2">
+                <h5> Total Amount: @Math.Round(Convert.ToDecimal(TotalAmount), 2) &euro;</h5>
+            </div>
+            <div class="col-2">
+                <label for="categorySelector">Category</label>
+                <InputSelect @bind-Value="CurrentSelectedCategory" class="border-bottom" id="categorySelector">
+                    <option value="@string.Empty">All</option>
+                    @if (Categories != null)
+                    {
+                        @foreach (var category in Categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-2">
+                <label for="labelSelector">Label</label>
+                <InputSelect @bind-Value="CurrentSelectedLabel" class="border-bottom" id="labelSelector">
+                    <option value="@string.Empty">All</option>
+                    @if (Labels != null)
+                    {
+                        @foreach (var label in Labels)
+                        {
+                            <option value="@label.Id">@label.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-2">
+                <MudSelect T=string @bind-Value="CurrentSelectedCategory" Label="Select a Category" Placeholder="Please Select" AdornmentColor="Color.Primary">
+                        @foreach (var category in Categories)
+                        {
+                            <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
+                        }
+                </MudSelect>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1">
+                <MudToggleGroup T="int" Vertical @bind-Value="@SelectedYear" Outline="true" Delimiters="true" Dense="false" Rounded="false" CheckMark="false" FixedContent="false">
+                    @if(Years.Count != 0){
+                        foreach(var year in Years){
+                            <MudToggleItem Value="@year"/>
+                        }
+                    }
+                </MudToggleGroup>
+            </div>
+            <div class="col-10">
+                <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+            </div>
+        </div>
+        }
+
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin/>
+    </NotAuthorized>
+</AuthorizeView>
+

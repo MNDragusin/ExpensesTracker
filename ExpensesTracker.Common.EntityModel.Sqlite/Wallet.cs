@@ -5,5 +5,8 @@ namespace ExpensesTracker.Common.EntityModel.Sqlite;
 
 public class Wallet : BaseDefinition
 {
-    public virtual ICollection<WalletEntry> Entries { get; set; }
+    [NotMapped]
+    public virtual IEnumerable<WalletEntry> Entries { get; set; }
+    [NotMapped]
+    public virtual float TotalAmount { get; set; }
 }

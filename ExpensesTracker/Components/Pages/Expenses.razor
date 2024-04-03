@@ -9,23 +9,11 @@
     <Authorized>
         <div class="row">
             <div class="form-group col-5">
-                <a class="btn btn-primary" href="AddNewExpense">
-                    <i class="oi oi-plus"></i> Add new
-                </a>
-            </div>
-            <div class="col-5">
-                <ImportData OnParseCallback="OnDataImported"/>
+                <MudButton Href="AddNewExpense" Variant="Variant.Text" Color="Color.Primary">Add new</MudButton>
             </div>
         </div>
 
-        @if (_expenses is null)
-        {
-            <div class="align-content-center spinner-border">
-            </div>
-        }
-        else
-        {
-            <table class="table">
+            <MudSimpleTable Hover="true" Dense="true" FixedHeader="true" Style="height:550px">
                 <thead>
                 <tr>
                     <th>Date</th>
@@ -48,16 +36,12 @@
                         <th>
                             <div class="row">
                                 <div class="col">
-                                    <a class="btn btn-info" href="/EditEntry/@entry.EntryId">
-                                        <i class="fluent--pen-20-filled"></i>
-                                    </a>
+                                    <MudIconButton HRef="@($"/EditEntry/{entry.EntryId}")" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" />
                                 </div>
                                 <div class="col">
                                     <form method="post" @onsubmit="@(()=>RemoveEntry(entry.EntryId))" @formname="@($"DeleteEntrt_{entry.EntryId}")">
                                     <AntiforgeryToken />
-                                        <button class="btn btn-danger">
-                                            <i class="ooui--trash"></i>
-                                        </button>
+                                        <MudIconButton ButtonType="ButtonType.Submit" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large" />
                                     </form>
                                 </div>
                             </div>    
@@ -65,7 +49,9 @@
                     </tr>
                 }
                 </tbody>
-            </table>
-        }
+            </MudSimpleTable>
     </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
 </AuthorizeView>

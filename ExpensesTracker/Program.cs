@@ -3,12 +3,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ExpensesTracker.Client.Pages;
 using ExpensesTracker.Common.DataContext.Sqlite;
-using ExpensesTracker.Components;
 using ExpensesTracker.Components.Account;
 using ExpensesTracker.Data;
 using ExpensesTracker.Server.Services;
+using ExpensesTracker.Shared;
+using Microsoft.Extensions.Options;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddMudServices();
+builder.Services.AddMudBlazorScrollManager();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -19,6 +23,13 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddControllers();
+
+//builder.Services.AddScoped(sp => new HttpClient
+// {
+//     BaseAddress = new Uri(builder.Configuration.GetSection("BaseUri").Value!)
+// });
 
 builder.Services.AddAuthentication(options =>
     {
@@ -44,11 +55,14 @@ builder.Services.AddScoped<IDataImporter, DataImporter>();
 builder.Services.AddScoped<IWalletController, WalletController>();
 builder.Services.AddExpensesContext();
 
+builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
 }
@@ -64,12 +78,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>()
+app.MapRazorComponents<ExpensesTracker.Components.App>() //VSCode is toooooooo stupid to reconize razor files !!! MS Indie Compoany
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Counter).Assembly);
+    .AddAdditionalAssemblies(typeof(DashboardBase).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
-
+app.MapControllers();
 app.Run();
