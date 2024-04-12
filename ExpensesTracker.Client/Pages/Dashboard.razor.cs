@@ -93,10 +93,7 @@ public class DashboardBase : ComponentBase
         }
 
         string claim = string.Empty;
-        if (!OperatingSystem.IsBrowser())
-        {
-            claim = state.User.Claims.FirstOrDefault().Value;
-        }
+        claim = state.User.Claims.FirstOrDefault().Value;
 
         _wallets = await _walletController.GetWallets(claim);
 

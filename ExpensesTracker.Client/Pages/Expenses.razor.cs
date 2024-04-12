@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-using ExpensesTracker.Server.Services;
 using ExpensesTracker.Common.EntityModel.Sqlite;
-using ExpensesTracker.Components.Account;
 using ExpensesTracker.Shared;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ExpensesTracker.Pages;
 
@@ -10,7 +9,7 @@ public class ExpensesBase : ComponentBase
 {
 
     [Inject] IWalletController WalletController { get; set; }
-    [Inject] IdentityUserAccessor UserAccessor { get; set; }
+    [Inject] AuthenticationStateProvider? _persistentAuthenticationStateProvider { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
 
     protected IEnumerable<WalletEntry> _expenses;
@@ -18,17 +17,27 @@ public class ExpensesBase : ComponentBase
     protected IEnumerable<Wallet> _wallets;
     protected IEnumerable<Label> _labels;
 
-    [CascadingParameter] private HttpContext _httpContext { get; set; } = default!;
+    protected bool ShowLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        var user = await UserAccessor.GetRequiredUserAsync(_httpContext);
+        ShowLoading = true;
+        AuthenticationState state = await _persistentAuthenticationStateProvider!.GetAuthenticationStateAsync();
 
-        _wallets = await WalletController.GetWallets(user.Id);
-        _labels = await WalletController.GetLabels(user.Id);
-        _categories = await WalletController.GetCategories(user.Id);
+        if (!state.User.Identity.IsAuthenticated)
+        {
+            return;
+        }
+
+        string claim = string.Empty;
+        claim = state.User.Claims.FirstOrDefault().Value;
+
+        _wallets = await WalletController.GetWallets(claim);
+        _labels = await WalletController.GetLabels(claim);
+        _categories = await WalletController.GetCategories(claim);
 
         await LoadEntries();
+        ShowLoading = false;
     }
 
     private async Task LoadEntries()

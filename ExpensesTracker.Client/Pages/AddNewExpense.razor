@@ -1,0 +1,65 @@
+@using ExpensesTracker.Pages
+@inherits AddNewExpenseBase
+@page "/AddNewExpense"
+@page "/EditEntry/{Id}"
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Add New Expense</h3>
+        <MudOverlay @bind-Visible="ShowLoading" DarkBackground="true" AutoClose="false">
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        </MudOverlay>
+<MudCard class="w-50 p-3">
+        <MudCardContent>
+            <div class="form-group">
+                <MudNumericField Immediate="false" Label="de-DE" Format="N2" T="float" @bind-Value="NewEntry.Amount" HelperText="@NewEntry.Amount.ToString()"/>
+            </div>
+
+            <div class="form-group">
+                <MudDatePicker Label="dd.MM.yyyy" Editable="true" @bind-Date="DateTimeVar" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Placeholder="de-AT Date" />
+            </div>
+
+            <div class="form-group">
+                <MudSelect @bind-Value="NewEntry.WalletId" Label="Wallet"> @* MultiSelection="true" SelectAll="true"> *@
+                    <MudSelectItem Value="@string.Empty">All</MudSelectItem>
+                    @if(!ShowLoading){
+                        @foreach (var item in _wallets)
+                        {
+                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </div>
+
+            <div class="form-group">
+                <MudSelect @bind-Value="NewEntry.CategoryId" Label="Category"> @* MultiSelection="true" SelectAll="true"> *@
+                    <MudSelectItem Value="@string.Empty">All</MudSelectItem>
+                    @if(!ShowLoading){
+                        @foreach (var item in _categories)
+                        {
+                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                        }
+                    }
+                    
+                </MudSelect>
+            </div>
+            <div class="form-group">
+                <MudSelect @bind-Value="NewEntry.LabelId" Label="Label"> @* MultiSelection="true" SelectAll="true"> *@
+                    <MudSelectItem Value="@string.Empty">All</MudSelectItem>
+                    @if(!ShowLoading){
+                        @foreach (var item in _labels)
+                        {
+                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </div>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton OnClick="@(()=>Submit())" ButtonType="ButtonType.Button" Variant="Variant.Text" Color="Color.Primary">@_buttonName</MudButton>
+        </MudCardActions>
+</MudCard>
+        
+            
+    </Authorized>
+</AuthorizeView>

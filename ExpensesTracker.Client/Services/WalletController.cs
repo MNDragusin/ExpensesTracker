@@ -19,9 +19,15 @@ namespace ExpensesTracker.Client.Services
             throw new NotImplementedException();
         }
 
-        public Task<WalletEntry> AddNewEntry(WalletEntry walletEntry)
-        {
-            throw new NotImplementedException();
+        public async Task<WalletEntry> AddNewEntry(WalletEntry walletEntry)
+        {   
+            walletEntry.EntryId = string.Empty;
+            var result = await _httpClient.PostAsJsonAsync("/api/ExpensesCrud/newWalletEntry", walletEntry);
+            if(!result.IsSuccessStatusCode){
+                return null;
+            }
+
+            return await result.Content.ReadFromJsonAsync<WalletEntry>();
         }
 
         public Task<Label> AddNewLabel(Label newLabel)
@@ -34,9 +40,10 @@ namespace ExpensesTracker.Client.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> Delete(string id)
+        public async Task<bool> Delete(string id)
         {
-            throw new NotImplementedException();
+            var result = await _httpClient.DeleteAsync($"/api/ExpensesCrud/removeEntry?id={id}");
+            return result.IsSuccessStatusCode;
         }
 
         public Task<bool> DeletWallet(string walletId)
@@ -56,9 +63,10 @@ namespace ExpensesTracker.Client.Services
             return result;
         }
 
-        public Task<WalletEntry> GetEntry(string entryId)
+        public async Task<WalletEntry> GetEntry(string entryId)
         {
-            throw new NotImplementedException();
+            var result = await _httpClient.GetFromJsonAsync<WalletEntry>($"/api/ExpensesCrud/entry?entryId={entryId}");
+            return result;
         }
 
         public async Task<IEnumerable<Label>> GetLabels(string ownerId)

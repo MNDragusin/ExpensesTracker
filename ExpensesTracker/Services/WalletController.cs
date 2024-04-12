@@ -56,6 +56,7 @@ public class WalletController : IWalletController
     
     public async Task<WalletEntry> AddNewEntry(WalletEntry walletEntry)
     {
+        walletEntry.EntryId = null;
         var result = await _context.WalletEntries.AddAsync(walletEntry);
         await _context.SaveChangesAsync();
         

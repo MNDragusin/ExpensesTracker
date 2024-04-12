@@ -2,7 +2,7 @@
 using ExpensesTracker.Shared;
 using ExpensesTracker.Common.EntityModel.Sqlite;
 using Microsoft.AspNetCore.Authorization;
-using SQLitePCL;
+
 
 namespace ExpensesTracker.Controllers
 {
@@ -25,14 +25,15 @@ namespace ExpensesTracker.Controllers
         [ProducesResponseType(401)] //Unauthorized
         public async Task<IActionResult> GetWallets()
         {
-            if(!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated){
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
                 return Unauthorized();
             }
 
             string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
 
             var wallets = await _walletControler.GetWallets(userId);
-            if(wallets == null || wallets.Count() == 0)
+            if (wallets == null || wallets.Count() == 0)
             {
                 return NotFound();
             }
@@ -43,17 +44,19 @@ namespace ExpensesTracker.Controllers
         [HttpGet("categories")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(404)]
-        [ProducesResponseType(401)] 
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetCategories()
         {
-            if(!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated){
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
                 return Unauthorized();
             }
 
             string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
 
             var categories = await _walletControler.GetCategories(userId);
-            if(categories == null || categories.Count() == 0){
+            if (categories == null || categories.Count() == 0)
+            {
                 return NotFound();
             }
 
@@ -64,15 +67,18 @@ namespace ExpensesTracker.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<WalletEntry>))]
         [ProducesResponseType(404)]
         [ProducesResponseType(401)]
-        public async Task<IActionResult> GetLabels(){
-            if(!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated){
+        public async Task<IActionResult> GetLabels()
+        {
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
                 return Unauthorized();
             }
 
             string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
 
             var lables = await _walletControler.GetLabels(userId);
-            if(lables == null || lables.Count() == 0){
+            if (lables == null || lables.Count() == 0)
+            {
                 return NotFound();
             }
 
@@ -85,30 +91,108 @@ namespace ExpensesTracker.Controllers
         [ProducesResponseType(401)]
         public async Task<IActionResult> GetEntriesForWallet(string walletId)
         {
-            if(!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated){
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
                 return Unauthorized();
             }
 
             string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
 
             var wallets = await _walletControler.GetWallets(userId);
-            if(wallets == null || wallets.Count() == 0)
+            if (wallets == null || wallets.Count() == 0)
             {
                 return NotFound();
             }
 
-            wallets = wallets.Where(w=>w.OwnerId == userId);
-            if(wallets == null || wallets.Count() == 0){
+            wallets = wallets.Where(w => w.OwnerId == userId);
+            if (wallets == null || wallets.Count() == 0)
+            {
                 return Unauthorized();
             }
 
             var entries = await _walletControler.GetAllExpenses(walletId);
-            if(entries == null || entries.Count() == 0){
+            if (entries == null || entries.Count() == 0)
+            {
                 return NotFound();
             }
 
             return Ok(entries);
         }
+
+        [HttpGet("entry")]
+        [ProducesResponseType(200, Type = typeof(WalletEntry))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> GetEntryById(string entryId){
+
+            if(string.IsNullOrEmpty(entryId)){
+                return BadRequest();
+            }
+
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
+
+            var result = await _walletControler.GetEntry(entryId);
+
+            if(result == null){
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
+
+        [HttpPost("newWalletEntry")]
+        [ProducesResponseType(200, Type = typeof(WalletEntry))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> AddNewEntry([FromBody] WalletEntry walletEntry)
+        {
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+            
+            string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
+            var result = await _walletControler.AddNewEntry(walletEntry);
+
+            return CreatedAtRoute(
+                routeValues: new { id = result.EntryId },
+                value: result
+            );
+        }
+
+        [HttpDelete("removeEntry")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteEntry(string id){
+             if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
+
+            var entry = await _walletControler.GetEntry(id);
+            if(entry is null || entry.EntryId != id){
+                return NotFound();
+            }
+
+            var result = await _walletControler.Delete(id);
+            if(!result){
+                return BadRequest("");
+            }
+
+            return Ok();
+        }
+        
     }
 }
 
