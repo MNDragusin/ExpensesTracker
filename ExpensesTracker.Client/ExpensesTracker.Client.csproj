@@ -33,6 +33,7 @@
     <None Remove="Services\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Components/" />
     <Folder Include="Services\" />
   </ItemGroup>
 </Project>

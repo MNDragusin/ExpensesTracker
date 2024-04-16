@@ -1,16 +1,9 @@
 @using ExpensesTracker.Common.EntityModel.Sqlite
 @using System.ComponentModel
 
-@inject ILogger<BaseDefinitionEditor> Logger
-
-<h3>@Title</h3>
 @if (Definitions != null)
 {
-    <EditForm Model="NewName" FormName="@FormName" OnSubmit="OnSubmit">
-        <InputText @bind-Value="NewName"/>
-        <button type="submit" class="btn btn-primary">+</button>
-    </EditForm>
-    <table class="table">
+    <MudSimpleTable Dense="true" Hover="true" Style="overflow-x: auto;">
         <thead>
         <tr>
             <th>Name</th>
@@ -18,7 +11,15 @@
         </tr>
         </thead>
         <tbody>
-
+        <tr>
+            <th>
+                <MudTextField @bind-Value="NewName" Label="@Title" Variant="Variant.Text"></MudTextField>
+            </th>
+            <th>
+                <MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="delete" OnClick="@(()=>OnSubmit())"></MudIconButton>
+            </th>
+        </tr>
+       
         @foreach (var def in Definitions)
         {
             <tr>
@@ -35,26 +36,17 @@
             </tr>
         }
         </tbody>
-    </table>
+    </MudSimpleTable>
 }
 
 @code {
     [Parameter] public IEnumerable<BaseDefinition> Definitions { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public Action<string>? OnNewDefinition { get; set; }
-
-    private string FormName { get; set; }
-    [SupplyParameterFromForm]
-    private string? NewName { get; set; } = string.Empty;
-
-    protected override void OnParametersSet()
-    {
-        FormName = $"New{Title}Form";
-    }
+    protected string NewName;
 
     private void OnSubmit()
     {
-        Logger.LogInformation($"New {Title} - {NewName}");
         OnNewDefinition?.Invoke(NewName);
         NewName = string.Empty;
     }

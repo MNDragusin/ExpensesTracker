@@ -167,6 +167,66 @@ namespace ExpensesTracker.Controllers
             );
         }
 
+        [HttpPost("newWallet")]
+        [ProducesResponseType(200, Type = typeof(Wallet))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> AddNewWallet([FromBody] Wallet newWallet){
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+            
+            string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
+            var result = await _walletControler.AddNewWallet(newWallet);
+
+            return CreatedAtRoute(
+                routeValues: new { id = result.Id },
+                value: result
+            );
+        }
+
+        [HttpPost("newCategory")]
+        [ProducesResponseType(200, Type = typeof(Category))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> AddNewCategory([FromBody] Category newCategory){
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+            
+            string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
+            var result = await _walletControler.AddNewCategory(newCategory);
+
+            return CreatedAtRoute(
+                routeValues: new { id = result.Id },
+                value: result
+            );
+        }
+
+        [HttpPost("newLabel")]
+        [ProducesResponseType(200, Type = typeof(Label))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> AddNewLabel([FromBody] Label newLabel){
+            if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+            
+            string userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault().Value;
+            var result = await _walletControler.AddNewLabel(newLabel);
+
+            return CreatedAtRoute(
+                routeValues: new { id = result.Id },
+                value: result
+            );
+        }
+
         [HttpDelete("removeEntry")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

@@ -14,9 +14,15 @@ namespace ExpensesTracker.Client.Services
             _httpClient = httpClient;
 		}
 
-        public Task<Category> AddNewCategory(Category newCategory)
+        public async Task<Category> AddNewCategory(Category newCategory)
         {
-            throw new NotImplementedException();
+            newCategory.Id = string.Empty;
+            var result = await _httpClient.PostAsJsonAsync("/api/ExpensesCrud/newCategory", newCategory);
+            if(!result.IsSuccessStatusCode){
+                return null;
+            }
+
+            return await result.Content.ReadFromJsonAsync<Category>();
         }
 
         public async Task<WalletEntry> AddNewEntry(WalletEntry walletEntry)
@@ -30,14 +36,26 @@ namespace ExpensesTracker.Client.Services
             return await result.Content.ReadFromJsonAsync<WalletEntry>();
         }
 
-        public Task<Label> AddNewLabel(Label newLabel)
+        public async Task<Label> AddNewLabel(Label newLabel)
         {
-            throw new NotImplementedException();
+            newLabel.Id = string.Empty;
+            var result = await _httpClient.PostAsJsonAsync("/api/ExpensesCrud/newLabel", newLabel);
+                        if(!result.IsSuccessStatusCode){
+                return null;
+            }
+
+            return await result.Content.ReadFromJsonAsync<Label>();
         }
 
-        public Task<Wallet> AddNewWallet(Wallet newWallet)
+        public async Task<Wallet> AddNewWallet(Wallet newWallet)
         {
-            throw new NotImplementedException();
+            newWallet.Id = string.Empty;
+            var result = await _httpClient.PostAsJsonAsync("/api/ExpensesCrud/newWallet", newWallet);
+            if(!result.IsSuccessStatusCode){
+                return null;
+            }
+
+            return await result.Content.ReadFromJsonAsync<Wallet>();
         }
 
         public async Task<bool> Delete(string id)

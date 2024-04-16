@@ -482,3 +482,9 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+ExpensesTracker/Data\app.db-wal
+ExpensesTracker/Data\app.db-shm
+ExpensesTracker/Data\app.db
+Expenses.db-wal
+Expenses.db-shm
+Expenses.db

@@ -22,20 +22,18 @@ public class AddNewExpenseBase : ComponentBase
     private bool _isEditMode = false;
     protected DateTime? DateTimeVar;
 
+    protected float AddedValue { get; set; }
+    protected bool ShowSuccessAlert { get; set; }
     protected bool ShowLoading = true;
     [Parameter] public string Id { get; set; }
     protected override async Task OnInitializedAsync()
     {
+        ShowSuccessAlert = false;
         ShowLoading = true;
-        AuthenticationState state = await _persistentAuthenticationStateProvider!.GetAuthenticationStateAsync();
-
-        if (!state.User.Identity.IsAuthenticated)
-        {
+        var claim = await TryGetAuthenticatedUser();
+        if(string.IsNullOrEmpty(claim)){
             return;
         }
-
-        string claim = string.Empty;
-        claim = state.User.Claims.FirstOrDefault().Value;
 
         if (!NavigationManager.Uri.Contains("/EditEntry/"))
         {
@@ -76,8 +74,66 @@ public class AddNewExpenseBase : ComponentBase
         var result = await WalletController.AddNewEntry(NewEntry);
 
         if(result == null){
-            //do something for the error
+            ShowSuccessAlert = false;
+            StateHasChanged();
+            return;
         }
+
+        ShowSuccessAlert = true;
+        AddedValue = result.Amount;
         NewEntry = new() { Date = DateOnly.FromDateTime(DateTime.Now) };
+        StateHasChanged();
+    }
+
+    private async Task<string> TryGetAuthenticatedUser(){
+        AuthenticationState state = await _persistentAuthenticationStateProvider!.GetAuthenticationStateAsync();
+
+        if (!state.User.Identity.IsAuthenticated)
+        {            
+            return string.Empty;
+        }
+
+        return state.User.Claims.FirstOrDefault().Value;
+    }
+
+    protected async void OnNewLabel(string newLabelName)
+    {
+        var user = await TryGetAuthenticatedUser();
+        if(string.IsNullOrEmpty(user)){
+            return;
+        }
+
+        Label label = new Label() { Name = newLabelName, OwnerId = user };
+        var restul = await WalletController.AddNewLabel(label);
+        _labels = _labels.Append(restul).OrderBy(l => l.Name);
+
+        StateHasChanged();
+    }
+
+    protected async void OnNewWallet(string newWalletName)
+    {
+        var user = await TryGetAuthenticatedUser();
+        if(string.IsNullOrEmpty(user)){
+            return;
+        }
+
+        Wallet wallet = new() { Name = newWalletName, OwnerId = user };
+        var restul = await WalletController.AddNewWallet(wallet);
+        _wallets = _wallets.Append(restul).OrderBy(l => l.Name);
+
+        StateHasChanged();
+    }
+
+    protected async void OnNewCategory(string newCategoryName)
+    {
+        var user = await TryGetAuthenticatedUser();
+        if(string.IsNullOrEmpty(user)){
+            return;
+        }
+        Category category = new() { Name = newCategoryName, OwnerId = user };
+        var restul = await WalletController.AddNewCategory(category);
+        _categories = _categories.Append(restul).OrderBy(l => l.Name);
+
+        StateHasChanged();
     }
 }

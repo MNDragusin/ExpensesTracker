@@ -65,6 +65,7 @@ public class WalletController : IWalletController
 
     public async Task<Label> AddNewLabel(Label newLabel)
     {
+        newLabel.Id = null;
         var result = await _context.Labels.AddAsync(newLabel);
         await _context.SaveChangesAsync();
 
@@ -73,6 +74,7 @@ public class WalletController : IWalletController
 
     public async Task<Category> AddNewCategory(Category newCategory)
     {
+        newCategory.Id = null;
         var result = await _context.Categories.AddAsync(newCategory);
         await _context.SaveChangesAsync();
 
@@ -81,6 +83,7 @@ public class WalletController : IWalletController
 
     public async Task<Wallet> AddNewWallet(Wallet newWallet)
     {
+        newWallet.Id = null;
         var result = await _context.Wallets.AddAsync(newWallet);
         await _context.SaveChangesAsync();
 
