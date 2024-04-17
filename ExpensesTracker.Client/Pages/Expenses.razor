@@ -1,4 +1,5 @@
 @using ExpensesTracker.Pages
+@using ExpensesTracker.Common.EntityModel.Sqlite
 @inherits ExpensesBase
 @page "/expenses"
 
@@ -12,48 +13,30 @@
                 <MudButton Href="AddNewExpense" Variant="Variant.Text" Color="Color.Primary">Add new</MudButton>
             </div>
         </div>
-            <MudSimpleTable Hover="true" Dense="true" FixedHeader="true" Style="height:550px">
-                <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Wallet</th>
-                    <th>Category</th>
-                    <th>Label</th>
-                    <th>Amount</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                @if(ShowLoading)
-                {
-                    <MudOverlay @bind-Visible="ShowLoading" DarkBackground="true" AutoClose="false">
-                        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-                    </MudOverlay>
-                }else{
-                    @foreach (var entry in _expenses)
-                    {
-                        <tr>
-                            <th>@entry.Date</th>
-                            <th>@_wallets.FirstOrDefault(w => w.Id == entry.WalletId)!.Name</th>
-                            <th>@_categories.FirstOrDefault(c => c.Id == entry.CategoryId)!.Name</th>
-                            <th>@_labels.FirstOrDefault(l => l.Id == entry.LabelId)!.Name</th>
-                            <th>@entry.Amount</th>
-                            <th>
-                                <div class="row">
-                                    <div class="col">
-                                        <MudIconButton HRef="@($"EditEntry/{entry.EntryId}")" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" />
-                                    </div>
-                                    <div class="col">
-                                        <MudIconButton ButtonType="ButtonType.Button" OnClick="@(()=>RemoveEntry(entry.EntryId))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large" />
-                                    </div>
-                                </div>    
-                            </th>
-                        </tr>
-                    }
-                }
-                
-                </tbody>
-            </MudSimpleTable>
+        <MudSpacer />
+            @if(!ShowLoading)
+            {
+                <MudDataGrid T="WalletEntry" Items="@_expenses" SortMode="SortMode.Multiple" Filterable="true">
+                    <Columns>
+                        <PropertyColumn Property="x => x.Date" />
+                        <PropertyColumn Property="x => _wallets.FirstOrDefault(w => w.Id == x.WalletId)!.Name" Title="Wallet"/>
+                        <PropertyColumn Property="x => _categories.FirstOrDefault(c => c.Id == x.CategoryId)!.Name" Title="Category"/>
+                        <PropertyColumn Property="x => _labels.FirstOrDefault(l => l.Id == x.LabelId)!.Name" Title="Label"/>
+                        <PropertyColumn Property="x => x.Amount" Filterable="false"/>
+                        <TemplateColumn CellClass="d-flex justify-end" Filterable="false">
+                            <CellTemplate Context="ItemContext">
+                                <MudStack Row>
+                                    <MudIconButton HRef="@($"EditEntry/{ItemContext.Item.EntryId}")" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" />
+                                    <MudIconButton ButtonType="ButtonType.Button" OnClick="@(()=>RemoveEntry(ItemContext.Item.EntryId))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large" />
+                                </MudStack>        
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                    <PagerContent>
+                        <MudDataGridPager T="WalletEntry" />
+                    </PagerContent>
+                </MudDataGrid>
+            }
     </Authorized>
     <NotAuthorized>
         <RedirectToLogin />
