@@ -1,16 +1,16 @@
-using ExpensesTracker.Common.DataContext.Sqlite;
+﻿using ExpensesTracker.Common.DataContext.Sqlite;
 using ExpensesTracker.Common.EntityModel.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ExpensesTracker.Shared;
 
 namespace ExpensesTracker.Server.Services;
 
-public class WalletController : IWalletController
+public class WalletService : IWalletController
 {
     private ExpensesContext _context;
     private IWalletController _walletControllerImplementation;
 
-    public WalletController(ExpensesContext context)
+    public WalletService(ExpensesContext context)
     {
         _context = context;
     }

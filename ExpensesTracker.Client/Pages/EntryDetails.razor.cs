@@ -1,22 +1,20 @@
-﻿using Microsoft.AspNetCore.Components;
-using ExpensesTracker.Common.EntityModel.Sqlite;
+﻿using ExpensesTracker.Common.EntityModel.Sqlite;
 using ExpensesTracker.Shared;
-using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
 
-namespace ExpensesTracker.Pages;
+namespace ExpensesTracker.Client.Pages;
 
-public class AddNewExpenseBase : ComponentBase
+public class EntryDetailsBase : AuthComponentBase
 {
-    [Inject] AuthenticationStateProvider? _persistentAuthenticationStateProvider { get; set; }
+    [Parameter] public string Id { get; set; }
     [Inject] IWalletController WalletController { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
 
-    [SupplyParameterFromForm] protected WalletEntry? NewEntry { get; set; } = null;
-    
     protected IEnumerable<Wallet>? _wallets;
     protected IEnumerable<Label>? _labels;
     protected IEnumerable<Category>? _categories;
-
+    protected WalletEntry? NewEntry { get; set; } = null;
+    
     protected string CategoryIdSelected {get;set;} = string.Empty;
     protected string _buttonName = "Add new";
     private bool _isEditMode = false;
@@ -25,8 +23,8 @@ public class AddNewExpenseBase : ComponentBase
     protected float AddedValue { get; set; }
     protected bool ShowSuccessAlert { get; set; }
     protected bool ShowLoading = true;
-    [Parameter] public string Id { get; set; }
-    protected override async Task OnInitializedAsync()
+    
+     protected override async Task OnInitializedAsync()
     {
         ShowSuccessAlert = false;
         ShowLoading = true;
@@ -35,7 +33,7 @@ public class AddNewExpenseBase : ComponentBase
             return;
         }
 
-        if (!NavigationManager.Uri.Contains("/EditEntry/"))
+        if (!NavigationManager.Uri.Contains("/editEntry/"))
         {
             DateTimeVar = DateTime.Now;
             NewEntry ??= new() { Date = DateOnly.FromDateTime((DateTime)DateTimeVar) };
@@ -83,17 +81,6 @@ public class AddNewExpenseBase : ComponentBase
         AddedValue = result.Amount;
         NewEntry = new() { Date = DateOnly.FromDateTime(DateTime.Now) };
         StateHasChanged();
-    }
-
-    private async Task<string> TryGetAuthenticatedUser(){
-        AuthenticationState state = await _persistentAuthenticationStateProvider!.GetAuthenticationStateAsync();
-
-        if (!state.User.Identity.IsAuthenticated)
-        {            
-            return string.Empty;
-        }
-
-        return state.User.Claims.FirstOrDefault().Value;
     }
 
     protected async void OnNewLabel(string newLabelName)

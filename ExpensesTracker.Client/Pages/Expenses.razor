@@ -1,44 +1,44 @@
-@using ExpensesTracker.Pages
-@using ExpensesTracker.Common.EntityModel.Sqlite
+﻿@page "/expenses"
 @inherits ExpensesBase
-@page "/expenses"
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
 
 <PageTitle>Expenses</PageTitle>
-<h3>Expenses</h3>
 
-<AuthorizeView>
-    <Authorized>
-        <div class="row">
-            <div class="form-group col-5">
-                <MudButton Href="AddNewExpense" Variant="Variant.Text" Color="Color.Primary">Add new</MudButton>
-            </div>
-        </div>
-        <MudSpacer />
-            @if(!ShowLoading)
-            {
-                <MudDataGrid T="WalletEntry" Items="@_expenses" SortMode="SortMode.Multiple" Filterable="true">
-                    <Columns>
-                        <PropertyColumn Property="x => x.Date" />
-                        <PropertyColumn Property="x => _wallets.FirstOrDefault(w => w.Id == x.WalletId)!.Name" Title="Wallet"/>
-                        <PropertyColumn Property="x => _categories.FirstOrDefault(c => c.Id == x.CategoryId)!.Name" Title="Category"/>
-                        <PropertyColumn Property="x => _labels.FirstOrDefault(l => l.Id == x.LabelId)!.Name" Title="Label"/>
-                        <PropertyColumn Property="x => x.Amount" Filterable="false"/>
-                        <TemplateColumn CellClass="d-flex justify-end" Filterable="false">
-                            <CellTemplate Context="ItemContext">
-                                <MudStack Row>
-                                    <MudIconButton HRef="@($"EditEntry/{ItemContext.Item.EntryId}")" Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" />
-                                    <MudIconButton ButtonType="ButtonType.Button" OnClick="@(()=>RemoveEntry(ItemContext.Item.EntryId))" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Large" />
-                                </MudStack>        
-                            </CellTemplate>
-                        </TemplateColumn>
-                    </Columns>
-                    <PagerContent>
-                        <MudDataGridPager T="WalletEntry" />
-                    </PagerContent>
-                </MudDataGrid>
-            }
-    </Authorized>
-    <NotAuthorized>
-        <RedirectToLogin />
-    </NotAuthorized>
-</AuthorizeView>
+
+@if (ShowLoading)
+{
+    <div class="text-center">
+    <h3>Loading...</h3>
+</div>
+}
+else
+{
+    <div class="tables w-75">
+    <QuickGrid Items="@_expenses.AsQueryable()" Pagination="@pagination">
+        <PropertyColumn Property="@(c=>c.Date)" Title="Date" />
+        <PropertyColumn Property="@(c=> _wallets.FirstOrDefault(w=>w.Id == c.WalletId).Name)" Title="Wallet" />
+        <PropertyColumn Property="@(c=> _categories.FirstOrDefault(w=>w.Id == c.CategoryId).Name)" Title="Category" />
+        <PropertyColumn Property="@(c=> _labels.FirstOrDefault(w=>w.Id == c.LabelId).Name)" Title="Label" />
+        <PropertyColumn Property="@(c=>c.Amount)" Title="Value" />
+        <TemplateColumn>
+            <button class="btn btn-info" @onclick="()=> EditEntry(context.EntryId)">
+                <i class="fluent--pen-20-filled"></i>
+            </button>
+
+            <button class="btn btn-danger" @onclick="()=> RemoveEntry(context.EntryId)">
+                <i class="ooui--trash"></i>
+            </button>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
+    <Paginator State="@pagination" />
+}
+
+@code {
+    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
+}

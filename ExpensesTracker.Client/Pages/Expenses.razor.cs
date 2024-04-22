@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ExpensesTracker.Common.EntityModel.Sqlite;
 using ExpensesTracker.Shared;
-using Microsoft.AspNetCore.Components.Authorization;
 
-namespace ExpensesTracker.Pages;
+namespace ExpensesTracker.Client.Pages;
 
-public class ExpensesBase : ComponentBase
+public class ExpensesBase : AuthComponentBase
 {
 
     [Inject] IWalletController WalletController { get; set; }
-    [Inject] AuthenticationStateProvider? _persistentAuthenticationStateProvider { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
 
     protected IEnumerable<WalletEntry> _expenses;
@@ -22,15 +20,12 @@ public class ExpensesBase : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         ShowLoading = true;
-        AuthenticationState state = await _persistentAuthenticationStateProvider!.GetAuthenticationStateAsync();
+        var claim = await TryGetAuthenticatedUser();
 
-        if (!state.User.Identity.IsAuthenticated)
+        if (string.IsNullOrEmpty(claim))
         {
             return;
         }
-
-        string claim = string.Empty;
-        claim = state.User.Claims.FirstOrDefault().Value;
 
         _wallets = await WalletController.GetWallets(claim);
         _labels = await WalletController.GetLabels(claim);
@@ -38,6 +33,7 @@ public class ExpensesBase : ComponentBase
 
         await LoadEntries();
         ShowLoading = false;
+        StateHasChanged();
     }
 
     private async Task LoadEntries()
@@ -67,5 +63,10 @@ public class ExpensesBase : ComponentBase
         //This is very very bad....
         await LoadEntries();
         StateHasChanged();
+    }
+
+    protected void EditEntry(string id)
+    {
+        NavigationManager.NavigateTo($"/editEntry/{id}");
     }
 }

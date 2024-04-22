@@ -1,54 +1,86 @@
-@using ExpensesTracker.Common.EntityModel.Sqlite
+﻿@using ExpensesTracker.Common.EntityModel.Sqlite
 @using System.ComponentModel
 
-@if (Definitions != null)
-{
-    <MudSimpleTable Dense="true" Hover="true" Style="overflow-x: auto;">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Edit</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th>
-                <MudTextField @bind-Value="NewName" Label="@Title" Variant="Variant.Text"></MudTextField>
-            </th>
-            <th>
-                <MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="delete" OnClick="@(()=>OnSubmit())"></MudIconButton>
-            </th>
-        </tr>
-       
-        @foreach (var def in Definitions)
-        {
-            <tr>
-                <th>@def.Name</th>
-                <th>
-                    <button class="btn btn-info">
-                        <i class="fluent--pen-20-filled"></i>
-                    </button>
+@rendermode InteractiveWebAssembly
 
-                    <button class="btn btn-danger">
-                        <i class="ooui--trash"></i>
-                    </button>
-                </th>
-            </tr>
-        }
-        </tbody>
-    </MudSimpleTable>
-}
+@inject ILogger<BaseDefinitionEditor> Logger
+<div class="card">
+    <div class="accordion-header">
+        <h5 class="mb-0">
+            <button @onclick="ToggleCollapse" class="btn btn-link collapsed" data-target="collapseContent"
+                aria-expanded="false">
+                @Title
+            </button>
+        </h5>
+    </div>
+    <div id="collapseContent" class="@collapseCssClass">
+        <div class="card-body">
+            @if (Definitions != null)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        <tr>
+                            <th>
+                                <InputText @bind-Value="NewName" />
+                            </th>
+                            <th>
+                                <button @onclick="OnSubmit" type="button" class="btn btn-primary">+</button>
+                            </th>
+                        </tr>
+                        @foreach (var def in Definitions)
+                        {
+                            <tr>
+                                <th>@def.Name</th>
+                                <th>
+                                    <button class="btn btn-info">
+                                        <i class="fluent--pen-20-filled"></i>
+                                    </button>
+
+                                    <button class="btn btn-danger">
+                                        <i class="ooui--trash"></i>
+                                    </button>
+                                </th>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
 
 @code {
     [Parameter] public IEnumerable<BaseDefinition> Definitions { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public Action<string>? OnNewDefinition { get; set; }
-    protected string NewName;
+
+    private string FormName { get; set; }
+    [SupplyParameterFromForm]
+    private string? NewName { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        FormName = $"New{Title}Form";
+    }
 
     private void OnSubmit()
     {
+        Logger.LogInformation($"New {Title} - {NewName}");
         OnNewDefinition?.Invoke(NewName);
-        NewName = string.Empty;
     }
-}
 
+    private bool _isCollapsed = true;
+    private string collapseCssClass => _isCollapsed ? "collapse" : "collapse show";
+    private void ToggleCollapse()
+    {
+        _isCollapsed = !_isCollapsed;
+    }
+
+}

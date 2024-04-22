@@ -4,39 +4,27 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-ExpensesTracker-06ac5445-96e6-45b6-9513-bd80b8fd40c2</UserSecretsId>
+    <UserSecretsId>aspnet-ExpensesTracker-99b76070-6808-4f25-9bd7-5361f6663d77</UserSecretsId>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
-  <ItemGroup>
-    <None Remove="Controllers\" />
-  </ItemGroup>
   <ItemGroup>
     <None Update="Data\app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="6.19.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <ProjectReference Include="..\ExpensesTracker.Client\ExpensesTracker.Client.csproj" />
-    <PackageReference Include="CsvHelper" Version="31.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
-    <ProjectReference Include="..\ExpensesTracker.Common.DataContext.Sqlite\ExpensesTracker.Common.DataContext.Sqlite.csproj" />
-    <ProjectReference Include="..\ExpensesTracker.Common.EntityModel.Sqlite\ExpensesTracker.Common.EntityModel.Sqlite.csproj" />
-    <ProjectReference Include="..\ExpensesTracker.Shared\ExpensesTracker.Shared.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\OpenIconic\" />
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\ExpensesTracker.Shared\ExpensesTracker.Shared.csproj" />
+    <ProjectReference Include="..\ExpensesTracker.Common.DataContext.Sqlite\ExpensesTracker.Common.DataContext.Sqlite.csproj" />
+    <ProjectReference Include="..\ExpensesTracker.Common.EntityModel.Sqlite\ExpensesTracker.Common.EntityModel.Sqlite.csproj" />
   </ItemGroup>
 
 </Project>

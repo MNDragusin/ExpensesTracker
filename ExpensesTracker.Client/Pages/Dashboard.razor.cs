@@ -2,7 +2,6 @@
 using ExpensesTracker.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using MudBlazor;
 
 namespace ExpensesTracker.Client.Pages;
 
@@ -17,7 +16,7 @@ public class DashboardBase : ComponentBase
     protected IEnumerable<Category>? Categories;
     protected IEnumerable<Label>? Labels;
 
-    protected List<ChartSeries> Series = new();
+    //protected List<ChartSeries> Series = new();
     protected readonly string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
     protected List<int> Years = new();
@@ -123,12 +122,12 @@ public class DashboardBase : ComponentBase
     private void ApplyFilters()
     {
         TotalAmount = 0;
-        Series.Clear();
+        //Series.Clear();
 
         foreach (var wallet in _wallets!)
         {
-            ChartSeries chartData = new ChartSeries();
-            chartData.Data = new double[12];
+            //ChartSeries chartData = new ChartSeries();
+            //chartData.Data = new double[12];
 
             wallet.Entries.OrderBy(e => e.Date);
             wallet.TotalAmount = 0;
@@ -154,15 +153,15 @@ public class DashboardBase : ComponentBase
             foreach (var entry in entries)
             {
                 wallet.TotalAmount += entry.Amount;
-                chartData.Data[entry.Date.Month - 1] += entry.Amount;
+                //chartData.Data[entry.Date.Month - 1] += entry.Amount;
             }
 
             TotalAmount += wallet.TotalAmount;
-            chartData.Name = $"{wallet.Name}: {Math.Round(Convert.ToDecimal(wallet.TotalAmount), 2)} \u20AC";
+            //chartData.Name = $"{wallet.Name}: {Math.Round(Convert.ToDecimal(wallet.TotalAmount), 2)} \u20AC";
 
             Years = Years.OrderDescending().ToList();
 
-            Series.Add(chartData);
+            //Series.Add(chartData);
         }
     }
 }

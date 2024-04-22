@@ -5,11 +5,11 @@ using System.Net.Http.Json;
 
 namespace ExpensesTracker.Client.Services
 {
-	public class WalletController : IWalletController
+	public class WalletServices : IWalletController
 	{
         private readonly HttpClient _httpClient;
 
-		public WalletController(HttpClient httpClient)
+		public WalletServices(HttpClient httpClient)
 		{
             _httpClient = httpClient;
 		}
@@ -105,4 +105,3 @@ namespace ExpensesTracker.Client.Services
         }
     }
 }
-

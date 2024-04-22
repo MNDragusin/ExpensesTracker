@@ -1,0 +1,75 @@
+﻿
+@page "/addNewEntry"
+@page "/editEntry/{Id}"
+
+@using Microsoft.AspNetCore.Authorization
+@inherits EntryDetailsBase
+
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
+
+<h3>EntryDetails</h3>
+
+@if(!ShowLoading)
+{
+<div class="row">
+    <div class="col">
+        <div class="card w-75">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="@nameof(NewEntry.Amount)">@nameof(NewEntry.Amount)</label>
+                    <InputNumber id="@nameof(NewEntry.Amount)" @bind-Value="@NewEntry.Amount" class="form-control"/>
+                    @* <ValidationMessage For="@(() => NewEntry.Amount)" /> *@
+                </div>
+
+                <div class="form-group">
+                    <label for="@nameof(NewEntry.Date)">@nameof(NewEntry.Date)</label>
+                    <InputDate id="@nameof(NewEntry.Date)" @bind-Value="NewEntry.Date" class="form-control" />
+                    @* <ValidationMessage For="@(() => NewEntry.Date)" /> *@
+                </div>
+                    
+                <div class="form-group">
+                    <label for="@nameof(NewEntry.WalletId)">@nameof(NewEntry.WalletId)</label>
+                    <InputSelect id="@nameof(NewEntry.WalletId)" @bind-Value="NewEntry.WalletId" class="form-control" >
+                        @foreach(var wallet in _wallets){
+                            <option value="@wallet.Id">@wallet.Name</option>
+                        }
+                    </InputSelect>
+                    @* <ValidationMessage For="@(() => NewEntry.WalletId)" /> *@
+                </div>
+
+                <div class="form-group">
+                    <label for="@nameof(NewEntry.CategoryId)">@nameof(NewEntry.CategoryId)</label>
+                    <InputSelect id="@nameof(NewEntry.CategoryId)" @bind-Value="NewEntry.CategoryId" class="form-control">
+                        @foreach(var category in _categories){
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </InputSelect>
+                    @* <ValidationMessage For="@(() => NewEntry.CategoryId)" /> *@
+                </div>
+
+                <div class="form-group">
+                    <label for="@nameof(NewEntry.LabelId)">@nameof(NewEntry.LabelId)</label>
+                    <InputSelect id="@nameof(NewEntry.LabelId)" @bind-Value="NewEntry.LabelId" class="form-control">
+                        @foreach(var label in _labels){
+                            <option value="@label.Id">@label.Name</option>
+                        }
+                    </InputSelect>
+                    @* <ValidationMessage For="@(() => NewEntry.LabelId)" /> *@
+                </div>
+
+                <div class="mt-3">   
+                    <button type="submit" class="btn btn-primary">@_buttonName</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <BaseDefinitionEditor Definitions="@_wallets" Title="Wallets" OnNewDefinition="OnNewWallet"/>
+        <BaseDefinitionEditor Definitions="@_categories" Title="Categories" OnNewDefinition="OnNewCategory"/>
+        <BaseDefinitionEditor Definitions="@_labels" Title="Labels" OnNewDefinition="OnNewLabel"/>
+    </div>
+</div>
+
+}
+
