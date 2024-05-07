@@ -8,6 +8,7 @@ using ExpensesTracker.Data;
 using ExpensesTracker.Common.DataContext.Sqlite;
 using ExpensesTracker.Shared;
 using ExpensesTracker.Server.Services;
+using ExpensesTracker.Services.ContextExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +29,9 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+//builder.Services.AddUserDbContext(builder.Configuration);
+builder.Services.AddUserDbContextFromCloud(builder.Configuration, true);
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -41,7 +42,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.AddScoped<IWalletController, WalletService>();
-builder.Services.AddExpensesContext();
+builder.Services.AddExpensesContextFromCloud(true);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
