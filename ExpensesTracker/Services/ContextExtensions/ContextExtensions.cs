@@ -16,13 +16,45 @@ namespace ExpensesTracker.Services.ContextExtensions
 
         public static IServiceCollection AddUserDbContextFromCloud(this IServiceCollection services, ConfigurationManager configuration, bool useConsumer)
         {
-            var connectionString = configuration.GetConnectionString("TemplateConnection") ?? throw new InvalidOperationException("Connection string 'TemplateConnection' not found.");
-            connectionString = connectionString.Replace("{path}", Environment.GetEnvironmentVariable(useConsumer ? "OneDriveConsumer" : "OneDriveCommercial"));
-
+            var connectionString = GetConnectionString(configuration, useConsumer);
+            if(!IsDatabaseConnected(connectionString)){
+                return services;
+            }
+            
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(connectionString));
 
             return services;
+        }
+
+        private static string GetConnectionString(ConfigurationManager configuration, bool useConsumer)
+        {
+            string connectionString = string.Empty;
+            if (OperatingSystem.IsMacOS())
+            {
+                connectionString = configuration.GetConnectionString("TemplateMacOSConnection") ?? throw new InvalidOperationException("Connection string 'TemplateConnection' not found.");
+                return connectionString.Replace("{username}", Environment.UserName);
+            }
+
+            connectionString = configuration.GetConnectionString("TemplateConnection") ?? throw new InvalidOperationException("Connection string 'TemplateConnection' not found.");
+            return connectionString.Replace("{path}", Environment.GetEnvironmentVariable(useConsumer ? "OneDriveConsumer" : "OneDriveCommercial"));
+        }
+
+        static bool IsDatabaseConnected(string connectionString)
+        {
+            try
+            {
+                using (var dbContext = new DbContext(new DbContextOptionsBuilder().UseSqlite(connectionString).Options))
+                {
+                    dbContext.Database.OpenConnection();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Error] - Connecting to the database: {ex.Message}");
+                return false;
+            }
         }
     }
 }
