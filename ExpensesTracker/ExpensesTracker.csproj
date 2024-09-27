@@ -19,4 +19,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ExpensesTracker.Common.DataContext.Sqlite\ExpensesTracker.Common.DataContext.Sqlite.csproj" />
+    <ProjectReference Include="..\ExpensesTracker.Common.EntityModel.Sqlite\ExpensesTracker.Common.EntityModel.Sqlite.csproj" />
+  </ItemGroup>
+
 </Project>
