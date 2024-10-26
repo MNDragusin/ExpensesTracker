@@ -16,18 +16,8 @@ public class HomeController : Controller
         _walletServices = walletServices;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var id = User.Claims.First().Value;
-        var wallets = await _walletServices.GetWallets(id);
-        var labels = await _walletServices.GetLabels(id);
-        var categories = await _walletServices.GetCategories(id);
-
-        foreach (var wallet in wallets!)
-        {
-            wallet.Entries = await _walletServices.GetAllExpenses(wallet.Id);
-        }
-
         return View();
     }
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using ExpensesTracker.Data;
 using ExpensesTracker.Common.DataContext.Sqlite;
+using ExpensesTracker.Components;
 using ExpensesTracker.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IWalletServices, WalletService>();
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
 var app = builder.Build();
 
@@ -42,6 +45,9 @@ app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-  
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 app.MapRazorPages();
+app.UseAntiforgery();
+
 app.Run();

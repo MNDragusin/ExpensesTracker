@@ -7,6 +7,7 @@ public struct WalletViewModel
     public required string WalletId { get; set; }
     public required string WalletName {get; set;}
     public required IEnumerable<Entry> Entries { get; set; }
+    public required float TotalAmount  {get;set;}
 }
 
 public struct Entry

@@ -19,19 +19,31 @@ namespace ExpensesTracker.Controllers
         }
 
         // GET: WalletController
-        [Route("[controller]/[action]")]
-        public async Task<ActionResult> Expenses()
+            [Route("[controller]/[action]/{walletId}")]
+        public async Task<ActionResult> Expenses(string? walletId)
         {
+            if (string.IsNullOrEmpty(walletId))
+            {
+                return View("Error");
+            }
+            
+            var walletViewModel = await GetWallet(walletId);    
+            return View(walletViewModel);
+        }
+
+        private  async Task<WalletViewModel> GetWallet(string walletId){
             var id = User.Claims.First().Value;
             var wallets = await _walletServices.GetWallets(id);
-            
-            var currentWallet = wallets.First();
+
+            var currentWallet = wallets.Where(e => e.Id == walletId).FirstOrDefault();
             currentWallet.Entries = await _walletServices.GetAllExpenses(currentWallet.Id);
             var labels = await _walletServices.GetLabels(id);
             var categories = await _walletServices.GetCategories(id);
 
+            float totalAmount = 0f;
             List<Entry> entries = new List<Entry>();
             foreach (var entry in currentWallet.Entries){
+                totalAmount += entry.Amount;
                 entries.Add(new Entry(){
                     EntryId = entry.EntryId,
                     Date = entry.Date,
@@ -44,15 +56,33 @@ namespace ExpensesTracker.Controllers
             WalletViewModel walletViewModel = new WalletViewModel(){
                 WalletId = currentWallet.Id,
                 WalletName = currentWallet.Name,
-                Entries = entries
+                Entries = entries,
+                TotalAmount = totalAmount
             };
 
-            return View(walletViewModel);
+            return walletViewModel;
         }
 
-        [Route("[controller]/[action]/{entryId}")]
-        public async Task<ActionResult> Edit(string? entryId){
+        [Route("[controller]/[action]")]
+        public async Task<ActionResult> Wallets()
+        {
+            var id = User.Claims.First().Value;
+            WalletsListViewModel walletsList = new WalletsListViewModel();
+            walletsList.Wallets = new();
+            var wallets = await _walletServices.GetWallets(id);
+            
+            foreach (var wallet in wallets){
+                var walletData = await GetWallet(wallet.Id);
+                walletsList.Wallets.Add(walletData);
+            }
 
+            return View(walletsList);
+        }
+
+        [Route("[controller]/newEntry")]
+        [Route("[controller]/[action]/{entryId}")]
+        public async Task<ActionResult> Edit(string? entryId)
+        {
             var entry = new WalletEntry(){
                 WalletId = string.Empty,
                 EntryId = string.Empty,
