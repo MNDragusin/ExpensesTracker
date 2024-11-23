@@ -1,0 +1,31 @@
+﻿@page "/counter"
+@using ExpensesTracker.Blazor.Client.Components
+@using ExpensesTracker.Models
+@rendermode InteractiveAuto
+
+<PageTitle>Wallets</PageTitle>
+
+<div class="container">
+    <div class="row">
+        @foreach (var wallet in Model.Wallets)
+        {
+            <div class="col">
+                <WalletCard WalletId="@wallet.WalletId" WalletName="@wallet.WalletName" TotalAmount="@wallet.TotalAmount" ColorCode="@wallet.ColorCode"></WalletCard>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+
+    WalletsListViewModel Model;
+    [Inject] public IWalletController Controller { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await Controller.Wallets();
+        
+        //return base.OnInitializedAsync();
+    }
+
+}

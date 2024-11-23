@@ -1,0 +1,15 @@
+<div id="walletCard_@WalletId" class="card text-white bg-primary mb-3" style="max-width: 18rem; cursor: pointer; background: @ColorCode">
+    <a asp-controller="Wallet" asp-action="Expenses" asp-route-walletId="@WalletId" style="text-decoration: none; color: inherit;">
+        <div class="card-header">W: @WalletName</div>
+        <div class="card-body">
+            <h5 class="card-title">Total Amount: @TotalAmount</h5>
+            @* <p class="card-text"> *@
+            @*     Some quick example text to build on the card title and make up the bulk of the *@
+            @*     card's content. *@
+            @* </p> *@
+        </div>
+    </a>
+</div>
+@code {
+
+}

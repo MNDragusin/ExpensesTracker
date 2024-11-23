@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpensesTracker.Common.Enti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpensesTracker.Common.DataContext.Sqlite", "ExpensesTracker.Common.DataContext.Sqlite\ExpensesTracker.Common.DataContext.Sqlite.csproj", "{776DBF28-4883-4666-B9F4-EDFEAA22BA97}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpensesTracker.Blazor", "ExpensesTracker.Blazor\ExpensesTracker.Blazor\ExpensesTracker.Blazor.csproj", "{7C87C0A0-E29D-4D8A-AFD3-23B6349AF6B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpensesTracker.Blazor.Client", "ExpensesTracker.Blazor\ExpensesTracker.Blazor.Client\ExpensesTracker.Blazor.Client.csproj", "{A9A5CD13-E52D-4E40-9F93-BB8DB27683CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{776DBF28-4883-4666-B9F4-EDFEAA22BA97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{776DBF28-4883-4666-B9F4-EDFEAA22BA97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{776DBF28-4883-4666-B9F4-EDFEAA22BA97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C87C0A0-E29D-4D8A-AFD3-23B6349AF6B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C87C0A0-E29D-4D8A-AFD3-23B6349AF6B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C87C0A0-E29D-4D8A-AFD3-23B6349AF6B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C87C0A0-E29D-4D8A-AFD3-23B6349AF6B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9A5CD13-E52D-4E40-9F93-BB8DB27683CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9A5CD13-E52D-4E40-9F93-BB8DB27683CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9A5CD13-E52D-4E40-9F93-BB8DB27683CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9A5CD13-E52D-4E40-9F93-BB8DB27683CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
