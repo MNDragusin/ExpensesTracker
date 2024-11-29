@@ -1,11 +1,12 @@
 using ExpensesTracker.Blazor.Client;
+using ExpensesTracker.Blazor.Client.Shared;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ExpensesTracker.Blazor.Components;
 using ExpensesTracker.Blazor.Components.Account;
+using ExpensesTracker.Blazor.Controller;
 using ExpensesTracker.Blazor.Data;
 using ExpensesTracker.Common.DataContext.Sqlite;
-using ExpensesTracker.Controllers;
 using ExpensesTracker.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,8 +39,12 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-builder.Services.AddScoped<IWalletServices, WalletService>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 builder.Services.AddTransient<IWalletController, WalletController>();
+builder.Services.AddTransient<IWalletService, WalletService>();
+
+builder.Services.AddSingleton<WalletState>();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -61,6 +66,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+app.MapControllers();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()

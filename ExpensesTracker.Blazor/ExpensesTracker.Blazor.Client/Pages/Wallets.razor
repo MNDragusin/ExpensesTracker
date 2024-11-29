@@ -1,0 +1,47 @@
+﻿@page "/wallets"
+@using ExpensesTracker.Blazor.Client.Components
+@using ExpensesTracker.Blazor.Client.Shared
+@using ExpensesTracker.Models
+
+<PageTitle>Wallets</PageTitle>
+
+@if (_model == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var wallet in _model.Wallets)
+            {
+                <div class="col">
+                    <WalletCard WalletId="@wallet.WalletId" WalletName="@wallet.WalletName"
+                                TotalAmount="@wallet.TotalAmount" ColorCode="@wallet.ColorCode" OnWalletSelectedCallback="OnWalletSelected"></WalletCard>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+@code {
+
+    private WalletsListViewModel? _model;
+    [Inject] public required IWalletController WalletController { get; set; }
+    [Inject] public required WalletState WalletState { get; set; }
+    [Inject] public required NavigationManager NavManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = await WalletController!.Wallets();
+    }
+
+    private void OnWalletSelected(string walletId)
+    {
+        WalletState.CurrentWallet = _model.Wallets.FirstOrDefault(w => w.WalletId == walletId);
+        NavManager.NavigateTo($"/wallet/{walletId}");
+    }
+}

@@ -12,4 +12,20 @@ public partial class WalletCard : ComponentBase
     public required float TotalAmount { get; set; }
     [Parameter]
     public required string ColorCode { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> OnWalletSelectedCallback { get; set; }
+    
+    public string WalletHref { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        WalletHref = $"/wallet/{WalletId}";
+        base.OnParametersSet();
+    }
+
+    private void OnWalletSelected()
+    {
+        OnWalletSelectedCallback.InvokeAsync(WalletId);
+    }
 }

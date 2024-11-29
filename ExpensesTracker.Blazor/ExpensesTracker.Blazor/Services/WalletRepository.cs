@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExpensesTracker.Services;
 
-public class WalletService : IWalletServices
+public class WalletRepository : IWalletRepository
 {
     private ExpensesContext _context;
 
-    public WalletService(ExpensesContext context)
+    public WalletRepository(ExpensesContext context)
     {
         _context = context;
     }

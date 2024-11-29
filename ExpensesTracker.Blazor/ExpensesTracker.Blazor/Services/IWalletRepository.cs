@@ -3,7 +3,7 @@ using ExpensesTracker.Common.EntityModel.Sqlite;
 
 namespace ExpensesTracker.Services;
 
-public interface IWalletServices
+public interface IWalletRepository
 {
     public Task<IEnumerable<WalletEntry>?> GetAllExpenses(string walletId);
     public Task<WalletEntry?> GetEntry(string entryId);

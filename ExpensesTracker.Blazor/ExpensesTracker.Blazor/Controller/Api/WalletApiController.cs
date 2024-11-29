@@ -1,32 +1,40 @@
 using ExpensesTracker.Models;
 using ExpensesTracker.Services;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ExpensesTracker.Blazor.Controller;
+namespace ExpensesTracker.Blazor.Controller.Api;
 
-public class WalletService : IWalletService
+[ApiController]
+[Route("api/Wallet")]
+public class WalletApiController(IWalletRepository walletRepository, ILogger<WalletApiController> logger)
+    : ControllerBase
 {
-    private readonly IWalletRepository _walletRepository;
-    
-    public WalletService(IWalletRepository walletRepository)
+    private readonly IWalletRepository _walletRepository = walletRepository;
+    private readonly ILogger<WalletApiController> _logger = logger;
+
+    [HttpGet("wallets-list")]
+    public async Task<ActionResult<WalletsListViewModel>> GetWalletsAsync()
     {
-        _walletRepository = walletRepository;
-    }
-    
-    public async Task<WalletsListViewModel> GetWalletsWithData(string id)
-    {
-        WalletsListViewModel walletsList = new WalletsListViewModel(true);
+        if (!User.Identity?.IsAuthenticated ?? false)
+        {
+            return Unauthorized("User is not authenticated");
+        }
+
+        var userId = User.Claims.FirstOrDefault()!.Value;
+        
+        WalletsListViewModel walletsList = new WalletsListViewModel();
         walletsList.Wallets = new();
-        var wallets = await _walletRepository.GetWallets(id);
+        var wallets = await _walletRepository.GetWallets(userId);
             
         foreach (var wallet in wallets){
-            var walletData = await GetWallet(wallet.Id, id);
+            var walletData = await GetWallet(wallet.Id, userId);
             walletsList.Wallets.Add(walletData);
         }
-        
-        return walletsList;
+
+        return Ok(walletsList);
     }
     
-    public async Task<WalletViewModel> GetWallet(string walletId, string userId)
+    private  async Task<WalletViewModel> GetWallet(string walletId, string userId)
     {
         var wallets = await _walletRepository.GetWallets(userId);
 
@@ -41,7 +49,7 @@ public class WalletService : IWalletService
             totalAmount += entry.Amount;
             var label = labels.FirstOrDefault(e => e.Id == entry.LabelId);
             var category = categories.FirstOrDefault(e => e.Id == entry.CategoryId);
-
+            
             entries.Add(new Entry(){
                 EntryId = entry.EntryId,
                 Date = entry.Date,
@@ -61,7 +69,7 @@ public class WalletService : IWalletService
             });
         }
 
-        WalletViewModel walletViewModel = new WalletViewModel(true){
+        WalletViewModel walletViewModel = new WalletViewModel(){
             WalletId = currentWallet.Id,
             WalletName = currentWallet.Name,
             Entries = entries,
@@ -71,10 +79,4 @@ public class WalletService : IWalletService
 
         return walletViewModel;
     }
-}
-
-public interface IWalletService
-{
-    public Task<WalletsListViewModel> GetWalletsWithData(string id);
-    public Task<WalletViewModel> GetWallet(string walletId, string userId);
 }
