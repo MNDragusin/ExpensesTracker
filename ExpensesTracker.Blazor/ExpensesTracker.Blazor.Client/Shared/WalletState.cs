@@ -12,7 +12,7 @@ public class WalletState
         set
         {
             _currentWallet = value;
-            StateChanged?.Invoke();
+           // StateChanged?.Invoke();
         } 
     }
 }
