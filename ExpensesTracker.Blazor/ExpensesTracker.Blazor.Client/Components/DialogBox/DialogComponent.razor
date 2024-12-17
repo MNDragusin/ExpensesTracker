@@ -1,0 +1,21 @@
+@if (IsOpen)
+{
+    <div class="overlay">
+        <div class="dialog">
+            <div class="dialog-header">
+                <div>@Title</div>
+                <div @onclick="CloseDialog">
+                    <div class="close">
+                        <i class="bi bi-x-lg"> </i>
+                    </div>    
+                </div>
+            </div>
+            <div class="dialog-body">
+                @BodyContent
+            </div>
+            <div class="dialog-footer">
+                @FooterContent
+            </div>
+        </div>
+    </div>
+}

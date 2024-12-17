@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace ExpensesTracker.Blazor.Client.Pages;
 
-public partial class WalletDataPage : ComponentBase, IDisposable
+public partial class WalletDataPage : ComponentBase
 {
    [Inject]
    private WalletState _currentWalletState { get; set; }
@@ -22,12 +22,7 @@ public partial class WalletDataPage : ComponentBase, IDisposable
             _currentWalletState.CurrentWallet = wallets.Wallets.FirstOrDefault(w => w.WalletId == WalletId);
         }
 
-        _currentWalletState.StateChanged += this.StateHasChanged;
+        //_currentWalletState.StateChanged += this.StateHasChanged;
         await base.OnInitializedAsync();
     }
-
-   public void Dispose()
-   {
-        _currentWalletState.StateChanged += this.StateHasChanged;
-   }
 }

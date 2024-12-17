@@ -3,9 +3,21 @@
 @inherits MainLayout
 
 <div>
-        <WalletNavBar/>
+        <WalletNavBar OnShowNewEntryCallback="OnNewEntry"/>
 </div>
+
+<DialogComponent Title="Test" IsOpen="_showModal">
+</DialogComponent>
 
 <div class="content">
         @Body
 </div>
+
+@code
+{
+        private bool _showModal = false;
+        private void OnNewEntry()
+        {
+                _showModal = true;
+        }
+}

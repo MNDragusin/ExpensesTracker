@@ -3,19 +3,22 @@ using Microsoft.AspNetCore.Components;
 
 namespace ExpensesTracker.Blazor.Client.Components;
 
-public partial class WalletNavBar : ComponentBase, IDisposable
+public partial class WalletNavBar : ComponentBase
 {
     [Inject]
     public required WalletState WalletState { get; set; }
 
+    [Parameter]
+    public EventCallback OnShowNewEntryCallback { get; set; }
     protected override void OnInitialized()
     {
-        WalletState.StateChanged += this.StateHasChanged;
+        //WalletState.StateChanged += this.StateHasChanged;
         base.OnInitialized();
     }
 
-    public void Dispose()
+    protected void OnNewEntryBtn()
     {
-        WalletState.StateChanged -= this.StateHasChanged;
+        OnShowNewEntryCallback.InvokeAsync();
+        Console.WriteLine("onNewEntryBtn");
     }
 }
