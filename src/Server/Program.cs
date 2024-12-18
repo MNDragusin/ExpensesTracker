@@ -1,8 +1,28 @@
+using System.Text;
+using AppDataContext;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddExpensesContextFromCloud(true);
+//Add services to the container.
+
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<DataContext>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyAllowedOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:7262", "https://localhost:5125 ")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -10,6 +30,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.UseCors("MyAllowedOrigins");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -23,8 +44,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.MapIdentityApi<IdentityUser>();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

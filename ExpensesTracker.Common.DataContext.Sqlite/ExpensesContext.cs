@@ -1,9 +1,10 @@
 using ExpensesTracker.Common.EntityModel.Sqlite;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExpensesTracker.Common.DataContext.Sqlite;
 
-public class ExpensesContext : DbContext
+public class ExpensesContext : IdentityDbContext
 {
     public ExpensesContext()
     {
@@ -28,7 +29,7 @@ public class ExpensesContext : DbContext
             return;
         }
 
-        string path = Path.Combine("..", "Expenses.db");
+        string path = Path.Combine("..", "AppData.db");
         optionsBuilder.UseSqlite($"Filename={path}");
     }
 }
