@@ -1,13 +1,10 @@
 ﻿@page "/Account/Login"
 
-@using System.ComponentModel.DataAnnotations
-@using System.Reflection
-@using System.Text
-@using System.Text.Json
+@using Client.Model
+@using Client.Services
 
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
-
 
 <PageTitle>Log in</PageTitle>
 
@@ -68,33 +65,19 @@
 
     //[CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
-    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [SupplyParameterFromForm] private LoginInputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     [Inject] private HttpClient _httpClient { get; set; }
+    [Inject] private IAuthenticationService _authService { get; set; }
     
     public async Task LoginUser()
     {
-        var jsonData = JsonSerializer.Serialize(Input);
-        
-        var respons = await _httpClient.PostAsync("register",new StringContent(jsonData, Encoding.UTF8, "application/json"));
-
-        if (respons.IsSuccessStatusCode)
+        var result = await _authService.AuthenticateUser(Input);
+        if (result.Success)
         {
-            
+            NavigationManager.NavigateTo("/");
         }
     }
-
-    private sealed class InputModel
-    {
-        [Required] [EmailAddress] public string Email { get; set; } = "";
-
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; } = "";
-
-        [Display(Name = "Remember me?")] public bool RememberMe { get; set; }
-    }
-
 }
