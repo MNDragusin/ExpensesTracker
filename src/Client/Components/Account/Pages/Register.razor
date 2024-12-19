@@ -37,19 +37,24 @@
 </div>
 
 @code {
-    
+
     [SupplyParameterFromForm] private RegisterInputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
     [Inject] private IAuthenticationService _authService { get; set; }
+    [Inject] private NavigationManager _navigationManager { get; set; }
     private string? Message = null;
 
     public async Task RegisterUser(EditContext editContext)
     {
         var result = await _authService.RegisterAsync(Input);
+
         if (!result.Success)
         {
             Message = result.Errors.ToString();
+            return;
         }
+
+        _navigationManager.NavigateTo("/Account/Login");
     }
 }

@@ -9,7 +9,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" />
         <PackageReference Include="Scalar.AspNetCore" />
     </ItemGroup>
