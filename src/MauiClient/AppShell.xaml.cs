@@ -7,11 +7,42 @@ namespace MauiClient
 {
     public partial class AppShell : Shell
     {
-        public AppShell(DataContext dataContext)
+        private DataContext _dataContext;
+        public AppShell(DataContext dataContext)// context data should not be here directly
         {
+            _dataContext = dataContext;
             InitializeComponent();
             var currentTheme = Application.Current!.UserAppTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
+
+            InitWallets();
+        }
+
+        private void InitWallets()
+        {
+            foreach (var wallet in _dataContext.Wallets)
+            {
+                var tab = new Tab
+                {
+                    Title = wallet.Name,
+                };
+
+                var shellContent = new ShellContent
+                {
+                    Content = new DataTemplate(typeof(MainPage))
+                    //Content = new WalletPage(wallet)
+                };
+
+                var flyoutItem = new FlyoutItem
+                {
+                    Title = wallet.Name,
+                };
+
+                tab.Items.Add(shellContent);
+                flyoutItem.Items.Add(tab);
+
+                Items.Add(flyoutItem);
+            }
         }
 
         public static async Task DisplaySnackbarAsync(string message)
