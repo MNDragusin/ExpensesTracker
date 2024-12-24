@@ -20,4 +20,17 @@
     <PackageVersion Include="Scalar.AspNetCore" Version="1.2.61" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
   </ItemGroup>
+
+	<ItemGroup>
+		<PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+		<PackageVersion Include="CommunityToolkit.Maui" Version="9.1.0" />
+		<PackageVersion Include="Microsoft.Data.Sqlite.Core" Version="9.0.0" />
+		<PackageVersion Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
+		<PackageVersion Include="Syncfusion.Maui.Toolkit" Version="1.0.1" />
+	</ItemGroup>
 </Project>

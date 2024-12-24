@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDataContext", "AppDataCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{78C9C56C-F467-47D1-B805-B3CC94C743F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiClient", "MauiClient\MauiClient.csproj", "{EB2A69C2-236A-4F24-965A-FBD1F3146FA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,11 +35,14 @@ Global
 		{78C9C56C-F467-47D1-B805-B3CC94C743F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78C9C56C-F467-47D1-B805-B3CC94C743F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78C9C56C-F467-47D1-B805-B3CC94C743F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB2A69C2-236A-4F24-965A-FBD1F3146FA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2A69C2-236A-4F24-965A-FBD1F3146FA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB2A69C2-236A-4F24-965A-FBD1F3146FA5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EB2A69C2-236A-4F24-965A-FBD1F3146FA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB2A69C2-236A-4F24-965A-FBD1F3146FA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {69B0ECA5-DE57-4CE3-978D-89B00AF9FFF5}
