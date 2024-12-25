@@ -15,22 +15,27 @@ namespace MauiClient
             var currentTheme = Application.Current!.UserAppTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
 
-            InitWallets();
+            InitWalletsFlyoutItems();
         }
 
-        private void InitWallets()
+        private void InitWalletsFlyoutItems()
         {
             foreach (var wallet in _dataContext.Wallets)
             {
                 var tab = new Tab
                 {
                     Title = wallet.Name,
+                    Icon = Application.Current?.Resources["IconProjects"] as FileImageSource
                 };
 
                 var shellContent = new ShellContent
                 {
-                    Content = new DataTemplate(typeof(MainPage))
-                    //Content = new WalletPage(wallet)
+                    Title = wallet.Name,
+                    Content = new ContentPage
+                    {
+                        Title = wallet.Name,
+                        Content = new Label { Text = $"Transactions for {wallet.Name}" }
+                    }
                 };
 
                 var flyoutItem = new FlyoutItem
