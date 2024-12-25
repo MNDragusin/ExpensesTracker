@@ -5,40 +5,32 @@ namespace AppDataContext;
 
 public static class ExpensesContextExtensions
 {
-    //private const string KCloudOsxConnectionString = "Data Source=/Users/{userName}/Library/CloudStorage/OneDrive-Personal/_db/ExpensesTracker/_data/Expenses.db";
-    private const string KCloudOsxConnectionString = "Data Source=/Users/{userName}/Library/CloudStorage/OneDrive-Personal/_db/ExpensesTracker/_data/AppData.db";
-    //private const string KCloudWindowsConnectionString = "Data Source={path}\\_db\\ExpensesTracker\\_data\\Expenses.db";
-    private const string KCloudWindowsConnectionString = "Data Source={path}\\_db\\ExpensesTracker\\_data\\AppData.db";
+    private const string KdbName = "AppData.db"; //"Expenses.db"
+    private const string KCloudOsxConnectionString = $"Data Source=/Users/[userName]/Library/CloudStorage/OneDrive-Personal/_db/ExpensesTracker/_data/{KdbName}";
+    private const string KCloudWindowsConnectionString = $"Data Source=[path]\\_db\\ExpensesTracker\\_data\\{KdbName}";
     
     public static IServiceCollection AddExpensesContext(this IServiceCollection services, string relativePath = "Data Source=..")
     {
-        string dbPath = Path.Combine(relativePath, "AppData.db");
-        if(!CheckDbConnection(dbPath)){
-            return services;
-        }
-        services.AddDbContext<DataContext>(options =>
-        {
-            options.UseSqlite($"Data Source={dbPath}");
-            options.LogTo(Console.WriteLine, new[]
-            {
-                Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting
-            });
-        });
-
-        return services;
+        string dbPath = Path.Combine(relativePath, KdbName);
+        return services.AddDbContextFrom(dbPath);
     }
 
     public static IServiceCollection AddExpensesContextFromCloud(this IServiceCollection services, bool useConsumer)
     {
         string onedrivePath = GetCloudPath(useConsumer); 
-        
-        if(!CheckDbConnection(onedrivePath)){
+        return services.AddDbContextFrom(onedrivePath);
+    }
+
+    private static IServiceCollection AddDbContextFrom(this IServiceCollection services, string path)
+    {
+        if (!CheckDbConnection(path))
+        {
             return services;
         }
 
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlite(onedrivePath);
+            options.UseSqlite(path);
             options.LogTo(Console.WriteLine, new[]
             {
                 Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting
@@ -51,11 +43,11 @@ public static class ExpensesContextExtensions
     private static string GetCloudPath(bool useConsumer){
 
         if(OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst()){
-            return KCloudOsxConnectionString.Replace("{userName}", Environment.UserName);
+            return KCloudOsxConnectionString.Replace("[userName]", Environment.UserName);
         }
 
         var oneDrivePath = Environment.GetEnvironmentVariable(useConsumer? "OneDriveConsumer" : "OneDriveCommercial");
-        return KCloudWindowsConnectionString.Replace("{path}", oneDrivePath);
+        return KCloudWindowsConnectionString.Replace("[path]", oneDrivePath);
     }
 
     static bool CheckDbConnection(string connectionString)
@@ -70,7 +62,7 @@ public static class ExpensesContextExtensions
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Error] - Connecting to the database: {ex.Message}");
+            Console.WriteLine($"[Error][ExpensesContextExtensions] - Connecting to the database: {ex.Message}");
             return false;
         }
     }
