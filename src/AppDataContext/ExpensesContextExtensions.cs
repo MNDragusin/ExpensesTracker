@@ -8,10 +8,11 @@ public static class ExpensesContextExtensions
     private const string KdbName = "AppData.db"; //"Expenses.db"
     private const string KCloudOsxConnectionString = $"Data Source=/Users/[userName]/Library/CloudStorage/OneDrive-Personal/_db/ExpensesTracker/_data/{KdbName}";
     private const string KCloudWindowsConnectionString = $"Data Source=[path]\\_db\\ExpensesTracker\\_data\\{KdbName}";
-    
-    public static IServiceCollection AddExpensesContext(this IServiceCollection services, string relativePath = "Data Source=..")
+    private const string KsqliteConnectionString = "Data Source=";
+    public static IServiceCollection AddExpensesContext(this IServiceCollection services, string relativePath = "..")
     {
-        string dbPath = Path.Combine(relativePath, KdbName);
+        string dbPath = KsqliteConnectionString;
+        dbPath += Path.Combine(KsqliteConnectionString, relativePath, KdbName);
         return services.AddDbContextFrom(dbPath);
     }
 
