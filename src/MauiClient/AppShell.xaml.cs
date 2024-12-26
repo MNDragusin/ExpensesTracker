@@ -1,4 +1,4 @@
-﻿using AppDataContext;
+﻿using MauiClient.PageModels;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using Font = Microsoft.Maui.Font;
@@ -7,10 +7,10 @@ namespace MauiClient
 {
     public partial class AppShell : Shell
     {
-        private DataContext _dataContext;
-        public AppShell(DataContext dataContext)// context data should not be here directly
+        private ShellViewModel _viewModel;
+        public AppShell(ShellViewModel viewModel)// context data should not be here directly
         {
-            _dataContext = dataContext;
+            _viewModel = viewModel;
             InitializeComponent();
             var currentTheme = Application.Current!.UserAppTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
@@ -20,27 +20,28 @@ namespace MauiClient
 
         private void InitWalletsFlyoutItems()
         {
-            foreach (var wallet in _dataContext.Wallets)
+            foreach (var walletName in _viewModel.GetWalletsNames())
             {
                 var tab = new Tab
                 {
-                    Title = wallet.Name,
+                    Title = walletName,
                     Icon = Application.Current?.Resources["IconProjects"] as FileImageSource
                 };
 
                 var shellContent = new ShellContent
                 {
-                    Title = wallet.Name,
+                    Title = walletName,
+                    Route = $"wallet?name={walletName}",
                     Content = new ContentPage
                     {
-                        Title = wallet.Name,
-                        Content = new Label { Text = $"Transactions for {wallet.Name}" }
+                        Title = walletName,
+                        Content = new Label { Text = $"Transactions for {walletName}" }
                     }
                 };
 
                 var flyoutItem = new FlyoutItem
                 {
-                    Title = wallet.Name,
+                    Title = walletName,
                 };
 
                 tab.Items.Add(shellContent);

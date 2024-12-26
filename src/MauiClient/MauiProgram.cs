@@ -30,8 +30,11 @@ namespace MauiClient
     		builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-            builder.Services.AddExpensesContextFromCloud(true);
+            builder.Services.AddExpensesContext(FileSystem.AppDataDirectory);
+            builder.Services.AddSingleton<ShellViewModel>();
+            builder.Services.AddTransientWithShellRoute<WalletsPage, WalletViewModel>("wallet");
 
+#region SampleContent
             builder.Services.AddSingleton<ProjectRepository>();
             builder.Services.AddSingleton<TaskRepository>();
             builder.Services.AddSingleton<CategoryRepository>();
@@ -44,6 +47,7 @@ namespace MauiClient
 
             builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
+#endregion
 
             return builder.Build();
         }

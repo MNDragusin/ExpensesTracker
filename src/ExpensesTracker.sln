@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{2E45E9D6-192C-4AE3-AD47-B45D52C0F195}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{BB1268A7-93EC-4507-BCD6-23106EE5126D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDataContext", "AppDataContext\AppDataContext.csproj", "{C6CC4A15-07A1-44EC-ACA1-80402B0BCF2F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{78C9C56C-F467-47D1-B805-B3CC94C743F3}"
@@ -23,10 +21,6 @@ Global
 		{2E45E9D6-192C-4AE3-AD47-B45D52C0F195}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E45E9D6-192C-4AE3-AD47-B45D52C0F195}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E45E9D6-192C-4AE3-AD47-B45D52C0F195}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB1268A7-93EC-4507-BCD6-23106EE5126D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB1268A7-93EC-4507-BCD6-23106EE5126D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB1268A7-93EC-4507-BCD6-23106EE5126D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB1268A7-93EC-4507-BCD6-23106EE5126D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6CC4A15-07A1-44EC-ACA1-80402B0BCF2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6CC4A15-07A1-44EC-ACA1-80402B0BCF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6CC4A15-07A1-44EC-ACA1-80402B0BCF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
