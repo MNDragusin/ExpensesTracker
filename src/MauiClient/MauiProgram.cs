@@ -30,7 +30,13 @@ namespace MauiClient
     		builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-            builder.Services.AddExpensesContext(FileSystem.AppDataDirectory);
+            //TODO Fix the macOS accessing file issue & REMOVE THIS ABOMINATION !!!!
+            if (OperatingSystem.IsWindows()){
+                builder.Services.AddExpensesContextFromCloud(true);
+            }else{
+                builder.Services.AddExpensesContext(FileSystem.AppDataDirectory);
+            }
+            
             builder.Services.AddSingleton<ShellViewModel>();
             builder.Services.AddTransientWithShellRoute<WalletsPage, WalletViewModel>("wallet");
 

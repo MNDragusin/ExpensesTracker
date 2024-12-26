@@ -2,8 +2,34 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MauiClient.Pages.WalletsPage">
+             x:Class="MauiClient.Pages.WalletsPage"
+             xmlns:pageModels="clr-namespace:MauiClient.PageModels"
+             xmlns:entities="clr-namespace:Shared.Entities;assembly=Shared"
+             x:DataType="pageModels:WalletViewModel">
     <ContentPage.Content>
-        
+        <ListView ItemsSource="{Binding CurrentEntries}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="entities:WalletEntry">
+                <ViewCell>
+                    <Grid Padding="30">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <Label Grid.Column="0" Text="{Binding Date}" />
+                        <Label Grid.Column="1" Text="{Binding Amount}"/>
+                        <Label Grid.Column="2" Text="{Binding Category.Name}"/>
+                        <Label Grid.Column="3" Text="{Binding Label.Name}"/>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </ContentPage.Content>
 </ContentPage>
