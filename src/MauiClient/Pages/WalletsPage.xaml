@@ -7,11 +7,11 @@
              xmlns:entities="clr-namespace:Shared.Entities;assembly=Shared"
              x:DataType="pageModels:WalletViewModel">
     <ContentPage.Content>
-        <ListView ItemsSource="{Binding CurrentEntries}">
+        <ListView ItemsSource="{Binding CurrentEntries}" RowHeight="100">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="entities:WalletEntry">
                 <ViewCell>
-                    <Grid Padding="30">
+                    <Grid VerticalOptions="Center" Padding="10" ColumnSpacing="20">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
@@ -20,12 +20,22 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        
-                        <Label Grid.Column="0" Text="{Binding Date}" />
-                        <Label Grid.Column="1" Text="{Binding Amount}"/>
-                        <Label Grid.Column="2" Text="{Binding Category.Name}"/>
-                        <Label Grid.Column="3" Text="{Binding Label.Name}"/>
+                        </Grid.ColumnDefinitions> 
+
+                        <Label Grid.Column="0" Style="{StaticResource Title2}" Text="{Binding Amount}" VerticalTextAlignment="Center"/>
+                        <Label Grid.Column="1" Text="{Binding Date}" VerticalTextAlignment="Center" />
+                        <Label Text="{Binding Category.ColorCode}"/>
+                        <Border Grid.Column="2" BackgroundColor="{Binding Category.ColorCode}" 
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                            
+                            <Label Text="{Binding Category.Name}"/>
+                        </Border>
+                        <Border Grid.Column="3" Background="{Binding Label.ColorCode}" 
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                            <Label Text="{Binding Label.Name}"/>    
+                        </Border>
                     </Grid>
                 </ViewCell>
             </DataTemplate>
