@@ -5,40 +5,49 @@
              x:Class="MauiClient.Pages.WalletsPage"
              xmlns:pageModels="clr-namespace:MauiClient.PageModels"
              xmlns:entities="clr-namespace:Shared.Entities;assembly=Shared"
-             x:DataType="pageModels:WalletViewModel">
+             x:DataType="pageModels:WalletViewModel"
+             xmlns:local="clr-namespace:MauiClient.Utilities">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:HexToColorConverter x:Key="HexToColorConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ContentPage.Content>
         <ListView ItemsSource="{Binding CurrentEntries}" RowHeight="100">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="entities:WalletEntry">
-                <ViewCell>
-                    <Grid VerticalOptions="Center" Padding="10" ColumnSpacing="20">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions> 
+                    <ViewCell>
+                        <Grid VerticalOptions="Center" Padding="10" ColumnSpacing="20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                            </Grid.ColumnDefinitions>
 
-                        <Label Grid.Column="0" Style="{StaticResource Title2}" Text="{Binding Amount}" VerticalTextAlignment="Center"/>
-                        <Label Grid.Column="1" Text="{Binding Date}" VerticalTextAlignment="Center" />
-                        <Label Text="{Binding Category.ColorCode}"/>
-                        <Border Grid.Column="2" BackgroundColor="{Binding Category.ColorCode}" 
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center">
+                            <Label Grid.Column="0" Style="{StaticResource Title2}" Text="{Binding Amount}" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="1" Text="{Binding Date}" VerticalTextAlignment="Center" />
+                            <Border Grid.Column="2" Background="{Binding Category.ColorCode, Converter={StaticResource HexToColorConverter}}" 
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand">
+                                <Label Text="{Binding Category.Name}"
+                                       HorizontalTextAlignment="Center"/>
+                            </Border>
                             
-                            <Label Text="{Binding Category.Name}"/>
-                        </Border>
-                        <Border Grid.Column="3" Background="{Binding Label.ColorCode}" 
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center">
-                            <Label Text="{Binding Label.Name}"/>    
-                        </Border>
-                    </Grid>
-                </ViewCell>
-            </DataTemplate>
+                            <Border Grid.Column="3" Background="{Binding Label.ColorCode, Converter={StaticResource HexToColorConverter}}" 
+                                    HorizontalOptions="FillAndExpand"
+                                    VerticalOptions="FillAndExpand">
+                                <Label Text="{Binding Label.Name}"
+                                       HorizontalTextAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
     </ContentPage.Content>
