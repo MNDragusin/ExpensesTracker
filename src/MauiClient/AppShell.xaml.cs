@@ -8,8 +8,10 @@ namespace MauiClient
     public partial class AppShell : Shell
     {
         private ShellViewModel _viewModel;
-        public AppShell(ShellViewModel viewModel)// context data should not be here directly
+        private ModalErrorHandler _errorHandler;
+        public AppShell(ShellViewModel viewModel, ModalErrorHandler errorHandler)// context data should not be here directly
         {
+            _errorHandler = errorHandler;
             _viewModel = viewModel;
             InitializeComponent();
             var currentTheme = Application.Current!.UserAppTheme;
@@ -20,34 +22,41 @@ namespace MauiClient
 
         private void InitWalletsFlyoutItems()
         {
-            foreach (var walletName in _viewModel.GetWalletsNames())
+            try
             {
-                var tab = new Tab
+                foreach (var walletName in _viewModel.GetWalletsNames())
                 {
-                    Title = walletName,
-                    Icon = Application.Current?.Resources["IconProjects"] as FileImageSource
-                };
-
-                var shellContent = new ShellContent
-                {
-                    Title = walletName,
-                    Route = $"wallet?name={walletName}",
-                    Content = new ContentPage
+                    var tab = new Tab
                     {
                         Title = walletName,
-                        Content = new Label { Text = $"Transactions for {walletName}" }
-                    }
-                };
+                        Icon = Application.Current?.Resources["IconProjects"] as FileImageSource
+                    };
 
-                var flyoutItem = new FlyoutItem
-                {
-                    Title = walletName,
-                };
+                    var shellContent = new ShellContent
+                    {
+                        Title = walletName,
+                        Route = $"wallet?name={walletName}",
+                        Content = new ContentPage
+                        {
+                            Title = walletName,
+                            Content = new Label { Text = $"Transactions for {walletName}" }
+                        }
+                    };
 
-                tab.Items.Add(shellContent);
-                flyoutItem.Items.Add(tab);
+                    var flyoutItem = new FlyoutItem
+                    {
+                        Title = walletName,
+                    };
 
-                Items.Add(flyoutItem);
+                    tab.Items.Add(shellContent);
+                    flyoutItem.Items.Add(tab);
+
+                    Items.Add(flyoutItem);
+                }
+            }
+            catch(Exception ex)
+            {
+                _errorHandler.HandleError(ex);
             }
         }
 

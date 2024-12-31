@@ -6,7 +6,10 @@
              xmlns:pageModels="clr-namespace:MauiClient.PageModels"
              xmlns:entities="clr-namespace:Shared.Entities;assembly=Shared"
              x:DataType="pageModels:WalletViewModel"
-             xmlns:local="clr-namespace:MauiClient.Utilities">
+             xmlns:local="clr-namespace:MauiClient.Utilities"
+             xmlns:shimmer="clr-namespace:Syncfusion.Maui.Toolkit.Shimmer;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:controls="clr-namespace:MauiClient.Pages.Controls">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -15,40 +18,93 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <ListView ItemsSource="{Binding CurrentEntries}" RowHeight="100">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="entities:WalletEntry">
-                    <ViewCell>
-                        <Grid VerticalOptions="Center" Padding="10" ColumnSpacing="20">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition  Width="100" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="150" />
-                            </Grid.ColumnDefinitions>
+        <Grid>
+            <Border Style="{StaticResource CardStyle}"
+                    Margin="0, 12"
+                    HeightRequest="{OnIdiom 300, Phone=200}">
 
-                            <Label Grid.Column="0" Style="{StaticResource Title2}" Text="{Binding Amount}" VerticalTextAlignment="Center"/>
-                            <Label Grid.Column="1" Text="{Binding Date}" VerticalTextAlignment="Center" />
-                            <Border Grid.Column="2" Background="{Binding Category.ColorCode, Converter={StaticResource HexToColorConverter}}" 
-                                    HorizontalOptions="FillAndExpand"
-                                    VerticalOptions="FillAndExpand">
-                                <Label Text="{Binding Category.Name}"
-                                       HorizontalTextAlignment="Center"/>
-                            </Border>
-                            
-                            <Border Grid.Column="3" Background="{Binding Label.ColorCode, Converter={StaticResource HexToColorConverter}}" 
-                                    HorizontalOptions="FillAndExpand"
-                                    VerticalOptions="FillAndExpand">
-                                <Label Text="{Binding Label.Name}"
-                                       HorizontalTextAlignment="Center"/>
-                            </Border>
+                <shimmer:SfShimmer BackgroundColor="Transparent"
+                                   VerticalOptions="Fill"
+                                   IsActive="{Binding IsBusy}">
+                    <shimmer:SfShimmer.CustomView>
+                        <Grid>
+                            <BoxView CornerRadius="12"
+                                     VerticalOptions="Fill"
+                                     Style="{StaticResource ShimmerCustomViewStyle}"/>
                         </Grid>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                    </shimmer:SfShimmer.CustomView>
+                    <shimmer:SfShimmer.Content>
+                        <chart:SfCircularChart x:Name="Chart">
+                            <chart:SfCircularChart.Legend>
+                                <controls:LegendExt Placement="Right">
+                                    <chart:ChartLegend.LabelStyle>
+                                        <chart:ChartLegendLabelStyle
+                                            TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}"
+                                            Margin="5"
+                                            FontSize="18"/>
+                                    </chart:ChartLegend.LabelStyle>
+                                </controls:LegendExt>
+                            </chart:SfCircularChart.Legend>
+                            <chart:RadialBarSeries ItemsSource="{Binding CategorySums}"
+                                                   PaletteBrushes="{Binding CategoryBrushes}"
+                                                   XBindingPath="Category.Name"
+                                                   YBindingPath="Amount" 
+                                                   ShowDataLabels="True"
+                                                   EnableTooltip="True" 
+                                                   TrackFill="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                                                   CapStyle = "BothCurve"/>
+                        </chart:SfCircularChart>
+                    </shimmer:SfShimmer.Content>
+                </shimmer:SfShimmer>
+
+            </Border>
+
+            <!-- <ListView ItemsSource="{Binding CurrentEntries}" -->
+            <!--           RowHeight="100"> -->
+            <!--     <ListView.ItemTemplate> -->
+            <!--         <DataTemplate x:DataType="entities:WalletEntry"> -->
+            <!--             <ViewCell> -->
+            <!--                 <Grid VerticalOptions="Center" -->
+            <!--                       Padding="10" -->
+            <!--                       ColumnSpacing="20"> -->
+            <!--                     <Grid.RowDefinitions> -->
+            <!--                         <RowDefinition Height="Auto"/> -->
+            <!--                     </Grid.RowDefinitions> -->
+            <!--                     <Grid.ColumnDefinitions> -->
+            <!--                         <ColumnDefinition  Width="100"/> -->
+            <!--                         <ColumnDefinition Width="100"/> -->
+            <!--                         <ColumnDefinition Width="170"/> -->
+            <!--                         <ColumnDefinition Width="170"/> -->
+            <!--                     </Grid.ColumnDefinitions> -->
+            <!-- -->
+            <!--                     <Label Grid.Column="0" -->
+            <!--                            Style="{StaticResource Title2}" -->
+            <!--                            Text="{Binding Amount}" -->
+            <!--                            VerticalTextAlignment="Center"/> -->
+            <!--                     <Label Grid.Column="1" -->
+            <!--                            Text="{Binding Date}" -->
+            <!--                            VerticalTextAlignment="Center"/> -->
+            <!--                     <Border Grid.Column="2" -->
+            <!--                             Background="{Binding Category.ColorCode, Converter={StaticResource HexToColorConverter}}" -->
+            <!--                             HorizontalOptions="Fill" -->
+            <!--                             VerticalOptions="Fill"> -->
+            <!--                         <Label Text="{Binding Category.Name}" -->
+            <!--                                HorizontalTextAlignment="Center"/> -->
+            <!--                     </Border> -->
+            <!-- -->
+            <!--                     <Border Grid.Column="3" -->
+            <!--                             Background="{Binding Label.ColorCode, Converter={StaticResource HexToColorConverter}}" -->
+            <!--                             HorizontalOptions="Fill" -->
+            <!--                             VerticalOptions="Fill"> -->
+            <!--                         <Label Text="{Binding Label.Name}" -->
+            <!--                                HorizontalTextAlignment="Center"/> -->
+            <!--                     </Border> -->
+            <!--                 </Grid> -->
+            <!--             </ViewCell> -->
+            <!--         </DataTemplate> -->
+            <!--     </ListView.ItemTemplate> -->
+            <!-- </ListView> -->
+        </Grid>
+
     </ContentPage.Content>
 </ContentPage>
