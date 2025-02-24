@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:pageModel="clr-namespace:MauiClient.PageModels"
+             xmlns:entities="clr-namespace:Shared.Entities;assembly=Shared"
+             x:DataType="pageModel:EntryDetailPageModel"
+             x:Class="MauiClient.Pages.TaskDetailPage"
+             Title="Task">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Text="Delete"
+            Command="{Binding DeleteCommand}"
+            Order="Primary"
+            Priority="0"
+            IconImageSource="{StaticResource IconDelete}" />
+    </ContentPage.ToolbarItems>        
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="{StaticResource LayoutSpacing}" Padding="{StaticResource LayoutPadding}">
+                <sf:SfTextInputLayout 
+                    Hint="Amount">
+                    <Entry
+                        Text="{Binding Entry.Amount}" />
+                </sf:SfTextInputLayout>
+
+                <sf:SfTextInputLayout 
+                    Hint="Income/Expense">
+                    
+                    <CheckBox
+                        HorizontalOptions="End"
+                        IsChecked="{Binding IsCompleted}" />
+                </sf:SfTextInputLayout>
+                
+                <sf:SfTextInputLayout 
+                    Hint="Date">
+                    <DatePicker Date="{Binding Entry.Date}"/>
+                </sf:SfTextInputLayout>
+                
+                <sf:SfTextInputLayout Hint="Wallet">
+                    <Button 
+                            Command="{Binding OpenModalCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="White"
+                            Margin="10"
+                            Padding="10"
+                            CornerRadius="10"/>
+                </sf:SfTextInputLayout>
+                
+                <sf:SfTextInputLayout Hint="Wallet">
+                    <Picker
+                        ItemsSource="{Binding Wallets}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=entities:Wallet}"
+                        SelectedItem="{Binding Entry.Wallet}"/>
+                </sf:SfTextInputLayout>
+                <sf:SfTextInputLayout Hint="Category">
+                    <Picker
+                        ItemsSource="{Binding Categories}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=entities:Category}"
+                        SelectedItem="{Binding Entry.Category}"/>
+                </sf:SfTextInputLayout>
+                <sf:SfTextInputLayout Hint="Label">
+                    <Picker
+                        ItemsSource="{Binding Labels}"
+                        ItemDisplayBinding="{Binding Name, x:DataType=entities:Label}"
+                        SelectedItem="{Binding Entry.Label}"/>
+                </sf:SfTextInputLayout>
+                <Button 
+                    HeightRequest="{OnIdiom 44, Desktop=60}"
+                    Text="Save"
+                    Command="{Binding SaveCommand}"/>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

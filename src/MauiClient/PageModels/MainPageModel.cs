@@ -1,6 +1,9 @@
+using AppDataContext;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiClient.Models;
+using Microsoft.EntityFrameworkCore;
+using Shared.Entities;
 
 namespace MauiClient.PageModels
 {
@@ -13,6 +16,7 @@ namespace MauiClient.PageModels
         private readonly CategoryRepository _categoryRepository;
         private readonly ModalErrorHandler _errorHandler;
         private readonly SeedDataService _seedDataService;
+        private readonly DataContext _walletContext;
 
         [ObservableProperty]
         private List<CategoryChartData> _todoCategoryData = [];
@@ -24,7 +28,7 @@ namespace MauiClient.PageModels
         private List<ProjectTask> _tasks = [];
 
         [ObservableProperty]
-        private List<Project> _projects = [];
+        private List<Wallet> _wallets = [];
 
         [ObservableProperty]
         bool _isBusy;
@@ -34,51 +38,48 @@ namespace MauiClient.PageModels
 
         [ObservableProperty]
         private string _today = DateTime.Now.ToString("dddd, MMM d");
-
-        public bool HasCompletedTasks
-            => Tasks?.Any(t => t.IsCompleted) ?? false;
-
+        
         public MainPageModel(SeedDataService seedDataService, ProjectRepository projectRepository,
-            TaskRepository taskRepository, CategoryRepository categoryRepository, ModalErrorHandler errorHandler)
+            TaskRepository taskRepository, CategoryRepository categoryRepository, ModalErrorHandler errorHandler, DataContext walletContext)
         {
             _projectRepository = projectRepository;
             _taskRepository = taskRepository;
             _categoryRepository = categoryRepository;
             _errorHandler = errorHandler;
             _seedDataService = seedDataService;
+            _walletContext = walletContext;
         }
 
         private async Task LoadData()
         {
+            List<Wallet> wallets = new();
             try
             {
                 IsBusy = true;
 
-                Projects = await _projectRepository.ListAsync();
+                wallets = await _walletContext.Wallets.ToListAsync();
 
                 var chartData = new List<CategoryChartData>();
                 var chartColors = new List<Brush>();
-
-                var categories = await _categoryRepository.ListAsync();
-                foreach (var category in categories)
+                
+                foreach (var wallet in wallets)
                 {
-                    chartColors.Add(category.ColorBrush);
+                    chartColors.Add(new SolidColorBrush(Microsoft.Maui.Graphics.Color.FromArgb(wallet.ColorCode)));
 
-                    var ps = Projects.Where(p => p.CategoryID == category.ID).ToList();
-                    int tasksCount = ps.SelectMany(p => p.Tasks).Count();
+                    var entries =  _walletContext.WalletEntries.Where(p => p.WalletId == wallet.Id);
 
-                    chartData.Add(new(category.Title, tasksCount));
+                    float totalAmount = await entries.SumAsync(entry => entry.Amount);
+                    wallet.TotalAmount = totalAmount;
+                    chartData.Add(new(wallet.Name, Convert.ToInt32(totalAmount)));
                 }
 
                 TodoCategoryData = chartData;
                 TodoCategoryColors = chartColors;
-
-                Tasks = await _taskRepository.ListAsync();
             }
             finally
             {
                 IsBusy = false;
-                OnPropertyChanged(nameof(HasCompletedTasks));
+                Wallets = wallets;
             }
         }
 
@@ -140,7 +141,6 @@ namespace MauiClient.PageModels
         [RelayCommand]
         private Task TaskCompleted(ProjectTask task)
         {
-            OnPropertyChanged(nameof(HasCompletedTasks));
             return _taskRepository.SaveItemAsync(task);
         }
 
@@ -149,8 +149,8 @@ namespace MauiClient.PageModels
             => Shell.Current.GoToAsync($"task");
 
         [RelayCommand]
-        private Task NavigateToProject(Project project)
-            => Shell.Current.GoToAsync($"project?id={project.ID}");
+        private Task NavigateToWallet(Wallet wallet) 
+            => Shell.Current.GoToAsync($"wallet?name={wallet.Name}");
 
         [RelayCommand]
         private Task NavigateToTask(ProjectTask task)
@@ -165,8 +165,7 @@ namespace MauiClient.PageModels
                 await _taskRepository.DeleteItemAsync(task);
                 Tasks.Remove(task);
             }
-
-            OnPropertyChanged(nameof(HasCompletedTasks));
+            
             Tasks = new(Tasks);
             await AppShell.DisplayToastAsync("All cleaned up!");
         }

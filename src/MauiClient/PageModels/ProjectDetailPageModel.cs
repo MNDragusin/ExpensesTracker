@@ -213,7 +213,7 @@ namespace MauiClient.PageModels
             // the tasks to the project and then save them all from here.
             await Shell.Current.GoToAsync($"task",
                 new ShellNavigationQueryParameters(){
-                    {TaskDetailPageModel.ProjectQueryKey, _project}
+                    {EntryDetailPageModel.ProjectQueryKey, _project}
                 });
         }
 

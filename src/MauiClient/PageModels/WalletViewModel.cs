@@ -56,8 +56,8 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
                 entry.Category = categories.FirstOrDefault(c => c.Id == entry.CategoryId);
                 entry.Label = labels.FirstOrDefault(l => l.Id == entry.LabelId);
             }
-
-            CurrentEntries = entries;
+            
+            CurrentEntries.AddRange(entries);
 
             foreach (var cat in categories)
             {

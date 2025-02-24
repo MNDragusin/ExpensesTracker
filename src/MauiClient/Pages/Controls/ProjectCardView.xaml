@@ -2,13 +2,21 @@
 <Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
         xmlns:controls="clr-namespace:MauiClient.Pages.Controls"
-        xmlns:models="clr-namespace:MauiClient.Models"
+        xmlns:models="clr-namespace:Shared.Entities;assembly=Shared"
         xmlns:fonts="clr-namespace:Fonts"
         xmlns:pageModels="clr-namespace:MauiClient.PageModels"
         xmlns:shimmer="clr-namespace:Syncfusion.Maui.Toolkit.Shimmer;assembly=Syncfusion.Maui.Toolkit"
+        xmlns:local="clr-namespace:MauiClient.Utilities"
         x:Class="MauiClient.Pages.Controls.ProjectCardView"
         Style="{StaticResource CardStyle}"
-        x:DataType="models:Project">
+        x:DataType="models:Wallet">
+    
+    <Border.Resources>
+        <ResourceDictionary>
+            <local:HexToColorConverter x:Key="HexToColorConverter"/>
+        </ResourceDictionary>
+    </Border.Resources>
+    
     <shimmer:SfShimmer
         BackgroundColor="Transparent"
         VerticalOptions="FillAndExpand"
@@ -16,44 +24,27 @@
         <shimmer:SfShimmer.CustomView>
             <VerticalStackLayout Spacing="15">
                 <BoxView 
-                    CornerRadius="48"
-                    WidthRequest="24"
-                    HeightRequest="24"
-                    HorizontalOptions="Start"
-                    VerticalOptions="Start"
-                    Style="{StaticResource ShimmerCustomViewStyle}"/>
-                <BoxView 
                     HeightRequest="24"
                     Style="{StaticResource ShimmerCustomViewStyle}"/>
                 <BoxView 
                     HeightRequest="48"
                     Style="{StaticResource ShimmerCustomViewStyle}"/>
-                <BoxView 
-                    HeightRequest="24"
-                    Margin="0, 12"
-                    Style="{StaticResource ShimmerCustomViewStyle}"/>
             </VerticalStackLayout>
         </shimmer:SfShimmer.CustomView>
         <shimmer:SfShimmer.Content>
             <VerticalStackLayout Spacing="15">
-                <Image HorizontalOptions="Start" Aspect="Center">
-                    <Image.Source>
-                        <FontImageSource 
-                    Glyph="{Binding Icon}" 
-                    FontFamily="{x:Static fonts:FluentUI.FontFamily}" 
-                    Color="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}"
-                    Size="{StaticResource IconSize}"/>
-                    </Image.Source>
-                </Image>
-                <Label Text="{Binding Name}" TextColor="{StaticResource Gray400}" FontSize="14" TextTransform="Uppercase"/>
-                <Label Text="{Binding Description}" LineBreakMode="WordWrap"/>
-                <HorizontalStackLayout Spacing="15" BindableLayout.ItemsSource="{Binding Tags}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="models:Tag">
-                            <controls:TagView />
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </HorizontalStackLayout>
+                <Border Style="{StaticResource CardStyle}"
+                        Background="{Binding ColorCode, 
+                        Converter={StaticResource HexToColorConverter}}">
+                    <Label  Text="{Binding Name}" 
+                            FontSize="14" TextTransform="Uppercase"                    
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            TextColor="{AppThemeBinding 
+                                Light={StaticResource DarkOnLightBackground},
+                                Dark={StaticResource LightOnDarkBackground}}" />
+                </Border>
+                <Label Text="{Binding TotalAmount}" LineBreakMode="WordWrap"/>
             </VerticalStackLayout>
         </shimmer:SfShimmer.Content>
     </shimmer:SfShimmer>

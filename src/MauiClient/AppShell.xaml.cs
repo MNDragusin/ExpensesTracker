@@ -24,7 +24,8 @@ namespace MauiClient
         {
             try
             {
-                foreach (var walletName in _viewModel.GetWalletsNames())
+                var wallets = _viewModel.GetWalletsNames();
+                foreach (var walletName in wallets)
                 {
                     var tab = new Tab
                     {

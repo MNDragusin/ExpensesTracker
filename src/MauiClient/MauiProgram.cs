@@ -52,7 +52,7 @@ namespace MauiClient
             builder.Services.AddSingleton<ManageMetaPageModel>();
 
             builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
-            builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
+            builder.Services.AddTransientWithShellRoute<TaskDetailPage, EntryDetailPageModel>("task");
 #endregion
 
             return builder.Build();
