@@ -21,7 +21,7 @@ public partial class ModalPicker : Popup
         BindingContext = this;
     }
 
-    private async void OnClose(object? sender, EventArgs e) => Close();
+    private void OnClose(object? sender, EventArgs e) => Close();
 
     private void OnOptionSelected(object? sender, SelectionChangedEventArgs e)
     {

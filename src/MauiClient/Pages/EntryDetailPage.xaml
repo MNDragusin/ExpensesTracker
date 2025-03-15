@@ -39,7 +39,7 @@
                     <DatePicker Date="{Binding Entry.Date}"/>
                 </sf:SfTextInputLayout>
                 
-                <sf:SfTextInputLayout Hint="Wallet">
+                <!--<sf:SfTextInputLayout Hint="Wallet">
                     <Button 
                             Command="{Binding OpenModalCommand}"
                             BackgroundColor="Transparent"
@@ -47,7 +47,7 @@
                             Margin="10"
                             Padding="10"
                             CornerRadius="10"/>
-                </sf:SfTextInputLayout>
+                </sf:SfTextInputLayout>-->
                 
                 <sf:SfTextInputLayout Hint="Wallet">
                     <Picker

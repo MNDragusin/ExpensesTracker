@@ -15,26 +15,18 @@ public partial class CustomPicker : ContentView
     private ModalPicker CurrentModal { get; set; }
     public IEnumerable<BaseDefinition> Options { get; set; }
     
+    //TODO - This requires Bindable properties
+    //Ignore WARNING for now
     public CustomPicker()
     {
         InitializeComponent();
-        Task.Run(Init);
+        CurrentModal = new ModalPicker(Options, OnOptionSelected);
+        BindingContext = this;
     }
 
-    private Task Init()
-    {
-        CurrentModal = new ModalPicker(Options, OnOptionSelected);
-        return Task.CompletedTask;
-    }
-    
     [RelayCommand]
-    private async Task ShowPickerPopup()
-    {
-        while (CurrentModal == null)
-        {
-            
-        }
-        
+    public void ShowPickerPopup()
+    { 
         Shell.Current.ShowPopupAsync(CurrentModal);
     }
 

@@ -44,13 +44,17 @@
                                 <Label Grid.Column="1"
                                        Text="{Binding Date}"
                                        VerticalTextAlignment="Center"/>
-                                <Border Grid.Column="2"
+                                <controls:TagView
+                                    Grid.Column="2"
+                                    Name="{Binding Category.Name}" HexColor="{Binding Category.ColorCode}">
+                                </controls:TagView>
+                                <!--<Border Grid.Column="2"
                                         Background="{Binding Category.ColorCode, Converter={StaticResource HexToColorConverter}}"
                                         HorizontalOptions="Fill"
                                         VerticalOptions="Fill">
                                     <Label Text="{Binding Category.Name}"
                                            HorizontalTextAlignment="Center"/>
-                                </Border>
+                                </Border>-->
             
                                 <Border Grid.Column="3"
                                         Background="{Binding Label.ColorCode, Converter={StaticResource HexToColorConverter}}"

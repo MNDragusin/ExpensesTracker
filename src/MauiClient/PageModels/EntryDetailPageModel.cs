@@ -42,15 +42,8 @@ namespace MauiClient.PageModels
             Wallets = await _walletContext.Wallets.ToListAsync(); 
             Categories = await _walletContext.Categories.ToListAsync(); 
             Labels = await _walletContext.Labels.ToListAsync();
-            
-            Entry = new WalletEntry
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now),
-                EntryId = null,
-                WalletId = null,
-                LabelId = null,
-                CategoryId = null
-            };
+
+            Entry = WalletEntry.NewEmptyWalletEntry();
             
             if (query.TryGetValue(ProjectQueryKey, out var entry))
             {
@@ -134,7 +127,7 @@ namespace MauiClient.PageModels
                 return;
             }
 
-            _walletContext.WalletEntries.Remove(_entry);
+            _walletContext.WalletEntries.Remove(Entry!);
             var changed = await _walletContext.SaveChangesAsync();
             if (changed == 0)
             {
@@ -147,9 +140,9 @@ namespace MauiClient.PageModels
         }
 
         [RelayCommand]
-        private async void OpenModal()
+        private void OpenModal()
         {
-            var popup = new ModalPicker(_labels, null);
+            var popup = new ModalPicker(Labels!, null);
             Shell.Current.ShowPopup(popup);
         }
     }

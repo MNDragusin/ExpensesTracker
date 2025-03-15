@@ -9,7 +9,7 @@ namespace MauiClient.PageModels
         public ShellViewModel(DataContext dataContext)
         {
             _dbContext = dataContext;
-            Task.Run(Rename);
+            //Task.Run(Rename);
         }
 
         public List<string> GetWalletsNames(){
@@ -19,6 +19,11 @@ namespace MauiClient.PageModels
         private async Task Rename()
         {
             var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(p => p.Name == "##DEV_TEST##");
+            if(wallet is null)
+            {
+                return;
+            }
+
             wallet.Name = "DEV_TEST";
 
             _dbContext.Wallets.Update(wallet);

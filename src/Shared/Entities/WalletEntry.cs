@@ -17,4 +17,16 @@ public class WalletEntry
     
     [Required] public required string CategoryId { get; set; }
     public Category? Category { get; set; }
+
+    public static WalletEntry NewEmptyWalletEntry()
+    {
+        return new WalletEntry
+        {
+            Date = DateOnly.FromDateTime(DateTime.Now),
+            EntryId = null,
+            WalletId = string.Empty,
+            LabelId = string.Empty,
+            CategoryId = string.Empty
+        };
+    }
 }
