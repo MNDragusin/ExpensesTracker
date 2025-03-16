@@ -7,22 +7,29 @@ namespace MauiClient.Pages.Controls
             {
                 var control = (TagView)bindable;
                 control.TitleLabel.Text = newValue as string;
+                control.InvalidateMeasure();
             });
 
         public static BindableProperty HexColorProperty = BindableProperty.Create(nameof(HexColor), typeof(string), typeof(TagView),
             propertyChanged: (bindable, oldValue, newValue) =>
             {
                 var control = (TagView)bindable;
-                control.ColorBadge.Background = HexConverter.Convert(newValue, typeof(Color), null, System.Globalization.CultureInfo.CurrentCulture) as Color;
+                control.ColorBadge.Background = StaticHexToColorConverter.Convert(newValue, typeof(Color), null, System.Globalization.CultureInfo.CurrentCulture) as Color;
+                control.InvalidateMeasure();
             });
 
         public TagView()
         {
             InitializeComponent();
-            BindingContext = this;
 
-            ColorBadge.Background = HexConverter.Convert(HexColor, typeof(Color), null, System.Globalization.CultureInfo.CurrentCulture) as Color;
-            TitleLabel.Text = Name ;
+            BindingContextChanged += (sender, args) =>
+            {
+                if (BindingContext != null)
+                {
+                    ColorBadge.Background = StaticHexToColorConverter.Convert(HexColor, typeof(Color), null, System.Globalization.CultureInfo.CurrentCulture) as Color;
+                    TitleLabel.Text = Name;
+                }
+            };
         }
 
         public string Name { 

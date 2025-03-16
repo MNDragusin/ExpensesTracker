@@ -13,18 +13,19 @@ namespace MauiClient.PageModels
 {
     public partial class EntryDetailPageModel : ObservableObject, IQueryAttributable
     {
+        [ObservableProperty]
         private bool _canDelete;
         private readonly DataContext _walletContext;
         private readonly ModalErrorHandler _errorHandler;
 
         [ObservableProperty]
         private string _title = string.Empty;
-        
+
         [ObservableProperty] private WalletEntry? _entry;
         [ObservableProperty] private List<Wallet>? _wallets;
         [ObservableProperty] private List<Category>? _categories;
         [ObservableProperty] private List<Label>? _labels;
-        
+
         public EntryDetailPageModel(DataContext walletContext, ModalErrorHandler errorHandler)
         {
             _walletContext = walletContext;
@@ -38,31 +39,21 @@ namespace MauiClient.PageModels
 
         private async Task LoadEntryAsync(IDictionary<string, object> query)
         {
-            _canDelete = false;
-            Wallets = await _walletContext.Wallets.ToListAsync(); 
-            Categories = await _walletContext.Categories.ToListAsync(); 
+            CanDelete = false;
+            Wallets = await _walletContext.Wallets.ToListAsync();
+            Categories = await _walletContext.Categories.ToListAsync();
             Labels = await _walletContext.Labels.ToListAsync();
 
             Entry = WalletEntry.NewEmptyWalletEntry();
-            
-            if (query.TryGetValue(ProjectQueryKey, out var entry))
+
+            if (query.TryGetValue(EntryQueryKey, out var entry))
             {
                 Entry = (WalletEntry)entry;
-                _canDelete = true;
+                CanDelete = true;
             }
         }
 
-        public bool CanDelete
-        {
-            get => _canDelete;
-            set
-            {
-                _canDelete = value;
-                DeleteCommand.NotifyCanExecuteChanged();
-            }
-        }
-
-        public static string ProjectQueryKey => "DetailsDataKey";
+        public static string EntryQueryKey => "DetailsDataKey";
 
         [RelayCommand]
         private async Task Save()
@@ -82,7 +73,7 @@ namespace MauiClient.PageModels
 
                 return;
             }
-            
+
             if (Entry.Category == null)
             {
                 _errorHandler.HandleError(
@@ -90,7 +81,7 @@ namespace MauiClient.PageModels
 
                 return;
             }
-            
+
             if (Entry.Label == null)
             {
                 _errorHandler.HandleError(
@@ -102,27 +93,31 @@ namespace MauiClient.PageModels
             Entry.WalletId = Entry.Wallet.Id;
             Entry.CategoryId = Entry.Category.Id;
             Entry.LabelId = Entry.Label.Id;
-            
-            if (_canDelete)
+
+            if (CanDelete)
             {
                 _walletContext.WalletEntries.Update(Entry);
             }
             else
             {
-                _walletContext.WalletEntries.Add(Entry);    
+                _walletContext.WalletEntries.Add(Entry);
             }
-            
+
             var changed = await _walletContext.SaveChangesAsync();
-            await Shell.Current.GoToAsync("..?refresh=true");
+
+            await Shell.Current.GoToAsync("..", new ShellNavigationQueryParameters(){
+                    {"refresh", true}
+                });
+
             string msg = changed > 0 ? "Entry Saved" : "Entry cannot be saved";
             await AppShell.DisplayToastAsync(msg);
 
         }
 
-        [RelayCommand(CanExecute = nameof(CanDelete))]
+        [RelayCommand]
         private async Task Delete()
         {
-            if (!_canDelete)
+            if (!CanDelete)
             {
                 return;
             }
@@ -131,12 +126,15 @@ namespace MauiClient.PageModels
             var changed = await _walletContext.SaveChangesAsync();
             if (changed == 0)
             {
-                await AppShell.DisplayToastAsync("Entry could not be deleted");   
+                await AppShell.DisplayToastAsync("Entry could not be deleted");
                 return;
             }
-            
-            await Shell.Current.GoToAsync("..?refresh=true");
+
             await AppShell.DisplayToastAsync("Entry deleted");
+            await Shell.Current.GoToAsync("..", new ShellNavigationQueryParameters(){
+                    {"refresh", true}
+                });
+
         }
 
         [RelayCommand]

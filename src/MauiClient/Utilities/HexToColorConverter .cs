@@ -8,16 +8,16 @@ namespace MauiClient.Utilities
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return HexConverter.Convert(value, targetType, parameter, culture);
+            return StaticHexToColorConverter.Convert(value, targetType, parameter, culture);
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return HexConverter.ConvertBack(value, targetType, parameter, culture);
+            return StaticHexToColorConverter.ConvertBack(value, targetType, parameter, culture);
         }
     }
 
-    public static class HexConverter
+    public static class StaticHexToColorConverter
     {
         public static object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {

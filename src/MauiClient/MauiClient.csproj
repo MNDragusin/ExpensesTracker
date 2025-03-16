@@ -92,5 +92,11 @@
 	  <ProjectReference Include="..\AppDataContext\AppDataContext.csproj" />
 	  <ProjectReference Include="..\Shared\Shared.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Pages\Controls\EntryRow.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
 	
 </Project>

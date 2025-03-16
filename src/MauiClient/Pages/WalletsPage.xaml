@@ -6,69 +6,26 @@
              xmlns:pageModels="clr-namespace:MauiClient.PageModels"
              xmlns:entities="clr-namespace:Shared.Entities;assembly=Shared"
              x:DataType="pageModels:WalletViewModel"
-             xmlns:local="clr-namespace:MauiClient.Utilities"
+             xmlns:utils="clr-namespace:MauiClient.Utilities"
              xmlns:shimmer="clr-namespace:Syncfusion.Maui.Toolkit.Shimmer;assembly=Syncfusion.Maui.Toolkit"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
              xmlns:controls="clr-namespace:MauiClient.Pages.Controls">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <local:HexToColorConverter x:Key="HexToColorConverter"/>
+            <utils:HexToColorConverter x:Key="HexToColorConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
     <ContentPage.Content>
         <Grid>
-            <ListView ItemsSource="{Binding CurrentEntries}"
-                      RowHeight="100">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="entities:WalletEntry">
-                        <ViewCell>
-                            <Grid VerticalOptions="Center"
-                                  Padding="10"
-                                  ColumnSpacing="20">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition  Width="100"/>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="170"/>
-                                    <ColumnDefinition Width="170"/>
-                                </Grid.ColumnDefinitions>
-            
-                                <Label Grid.Column="0"
-                                       Style="{StaticResource Title2}"
-                                       Text="{Binding Amount}"
-                                       VerticalTextAlignment="Center"/>
-                                <Label Grid.Column="1"
-                                       Text="{Binding Date}"
-                                       VerticalTextAlignment="Center"/>
-                                <controls:TagView
-                                    Grid.Column="2"
-                                    Name="{Binding Category.Name}" HexColor="{Binding Category.ColorCode}">
-                                </controls:TagView>
-                                <!--<Border Grid.Column="2"
-                                        Background="{Binding Category.ColorCode, Converter={StaticResource HexToColorConverter}}"
-                                        HorizontalOptions="Fill"
-                                        VerticalOptions="Fill">
-                                    <Label Text="{Binding Category.Name}"
-                                           HorizontalTextAlignment="Center"/>
-                                </Border>-->
-            
-                                <Border Grid.Column="3"
-                                        Background="{Binding Label.ColorCode, Converter={StaticResource HexToColorConverter}}"
-                                        HorizontalOptions="Fill"
-                                        VerticalOptions="Fill">
-                                    <Label Text="{Binding Label.Name}"
-                                           HorizontalTextAlignment="Center"/>
-                                </Border>
-                            </Grid>
-                            
-                        </ViewCell>
+            <CollectionView ItemsSource="{Binding CurrentEntries}" SelectionMode="Single" SelectionChangedCommand="{Binding EntrySelectedCommand}" SelectedItem="{Binding SelectedEntry}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:EntryRow/>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </Grid>
 
     </ContentPage.Content>

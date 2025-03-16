@@ -1,5 +1,6 @@
 using AppDataContext;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using Shared.Entities;
 
@@ -12,7 +13,7 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
         _dbContext = dataContext;
         _errorHandler = errorHandler;
     }
-    
+
     private readonly DataContext _dbContext;
     private readonly ModalErrorHandler _errorHandler;
 
@@ -27,10 +28,36 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
     [ObservableProperty]
     private bool _isBusy = true;
 
+    [ObservableProperty]
+    private WalletEntry _selectedEntry;
+
+    private string _currentWalletId;
+
+    [RelayCommand]
+    public void OnEntrySelected()
+    {
+        if (SelectedEntry is null)
+        {
+            return;
+        }
+
+        Shell.Current.GoToAsync($"task", new ShellNavigationQueryParameters(){
+                    {EntryDetailPageModel.EntryQueryKey, SelectedEntry}
+                });
+    }
+
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.TryGetValue("name", out var obj)) {
-            _ = LoadDataAsync((string)obj);
+        if (query.ContainsKey("refresh") && !string.IsNullOrEmpty(_currentWalletId))
+        {
+            _ = LoadDataAsync(_currentWalletId);
+            return;
+        }
+
+        if (query.TryGetValue("name", out var obj))
+        {
+            _currentWalletId = (string)obj;
+            _ = LoadDataAsync(_currentWalletId);
         }
     }
 
@@ -44,9 +71,9 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
 
             foreach (var category in categories)
             {
-                CategoryBrushes.Add( new SolidColorBrush(Color.FromArgb(category.ColorCode)));
+                CategoryBrushes.Add(new SolidColorBrush(Color.FromArgb(category.ColorCode)));
             }
-            
+
             var labels = await _dbContext.Labels.Where(l => l.OwnerId == currentWallet!.OwnerId).ToListAsync();
 
             var entries = await _dbContext.WalletEntries.Where(p => p.WalletId == currentWallet!.Id).ToListAsync();
@@ -56,7 +83,7 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
                 entry.Category = categories.FirstOrDefault(c => c.Id == entry.CategoryId);
                 entry.Label = labels.FirstOrDefault(l => l.Id == entry.LabelId);
             }
-            
+
             CurrentEntries.AddRange(entries);
 
             foreach (var cat in categories)
@@ -68,7 +95,7 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
         {
             _errorHandler.HandleError(ex);
         }
-        
+
         IsBusy = false;
     }
 }

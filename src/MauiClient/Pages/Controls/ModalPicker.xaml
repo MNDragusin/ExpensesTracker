@@ -20,7 +20,7 @@
                             <Border Padding="10" BackgroundColor="Transparent" 
                                     HorizontalOptions="Center" Stroke="Black" StrokeThickness="1"
                                     StrokeShape="Rectangle">
-                                <Label Text="{Binding .Name}" FontSize="16"></Label>
+                                <Label Text="{Binding Name}" FontSize="16"></Label>
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

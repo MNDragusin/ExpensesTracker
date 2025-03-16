@@ -4,12 +4,21 @@
              xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
              xmlns:pageModel="clr-namespace:MauiClient.PageModels"
              xmlns:entities="clr-namespace:Shared.Entities;assembly=Shared"
+             xmlns:utils="clr-namespace:MauiClient.Utilities"
              x:DataType="pageModel:EntryDetailPageModel"
              x:Class="MauiClient.Pages.TaskDetailPage"
              Title="Task">
 
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <utils:DateConverter x:Key="DateTimeConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <ContentPage.ToolbarItems>
         <ToolbarItem
+            IsEnabled="{Binding CanDelete}"
             Text="Delete"
             Command="{Binding DeleteCommand}"
             Order="Primary"
@@ -28,17 +37,18 @@
 
                 <sf:SfTextInputLayout 
                     Hint="Income/Expense">
-                    
-                    <CheckBox
+                    <!--TODO - Integrate new functionality-->
+                    <CheckBox IsEnabled="False"
                         HorizontalOptions="End"
-                        IsChecked="{Binding IsCompleted}" />
+                        IsChecked="false" />
                 </sf:SfTextInputLayout>
                 
                 <sf:SfTextInputLayout 
                     Hint="Date">
-                    <DatePicker Date="{Binding Entry.Date}"/>
+                    <DatePicker Date="{Binding Entry.Date, Converter={StaticResource DateTimeConverter}}"/>
                 </sf:SfTextInputLayout>
                 
+                <!--TODO-->
                 <!--<sf:SfTextInputLayout Hint="Wallet">
                     <Button 
                             Command="{Binding OpenModalCommand}"
