@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using AppDataContext;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,12 +14,12 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
         _dbContext = dataContext;
         _errorHandler = errorHandler;
     }
-
+    
     private readonly DataContext _dbContext;
     private readonly ModalErrorHandler _errorHandler;
 
     [ObservableProperty]
-    private List<WalletEntry> _currentEntries = new();
+    private ObservableCollection<WalletEntry> _currentEntries = new();
 
     [ObservableProperty]
     private List<float> _categorySums = new();
@@ -31,8 +32,12 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
     [ObservableProperty]
     private WalletEntry _selectedEntry;
 
+    [ObservableProperty] private WalletsPage.MyCanvas _mainChart;
+    
     private string _currentWalletId;
 
+    public Action InvalidateRequest;
+    
     [RelayCommand]
     public void OnEntrySelected()
     {
@@ -50,15 +55,15 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
     {
         if (query.ContainsKey("refresh") && !string.IsNullOrEmpty(_currentWalletId))
         {
-            _ = LoadDataAsync(_currentWalletId);
+            CurrentEntries.Remove(SelectedEntry);
             return;
         }
 
-        if (query.TryGetValue("name", out var obj))
-        {
-            _currentWalletId = (string)obj;
-            _ = LoadDataAsync(_currentWalletId);
-        }
+        if (!query.TryGetValue("name", out var obj)) return;
+        
+        _currentWalletId = (string)obj;
+        MainChart = new WalletsPage.MyCanvas(0, 0, 220, 220);
+        _ = LoadDataAsync(_currentWalletId);
     }
 
     private async Task LoadDataAsync(string nameId)
@@ -78,14 +83,19 @@ public partial class WalletViewModel : ObservableObject, IQueryAttributable
 
             var entries = await _dbContext.WalletEntries.Where(p => p.WalletId == currentWallet!.Id).ToListAsync();
 
+            float expensesAmount = 0;
             foreach (var entry in entries)
             {
                 entry.Category = categories.FirstOrDefault(c => c.Id == entry.CategoryId);
                 entry.Label = labels.FirstOrDefault(l => l.Id == entry.LabelId);
+                expensesAmount += entry.Amount;
             }
-
-            CurrentEntries.AddRange(entries);
-
+            
+            MainChart.UpdateValues(expensesAmount, expensesAmount/3);
+            InvalidateRequest?.Invoke();
+            
+            CurrentEntries = new(entries);
+            
             foreach (var cat in categories)
             {
                 CategorySums.Add(CurrentEntries.Where(c => c.CategoryId == cat.Id).Sum(e => e.Amount));

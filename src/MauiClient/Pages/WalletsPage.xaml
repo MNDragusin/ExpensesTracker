@@ -19,7 +19,17 @@
 
     <ContentPage.Content>
         <Grid>
-            <CollectionView ItemsSource="{Binding CurrentEntries}" SelectionMode="Single" SelectionChangedCommand="{Binding EntrySelectedCommand}" SelectedItem="{Binding SelectedEntry}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="300" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Border Margin="20">
+                <StackLayout Orientation="Horizontal">
+                    <GraphicsView x:Name="Canvas" Drawable="{Binding MainChart}" Rotation="-90"/>
+                </StackLayout>
+            </Border>
+            <CollectionView Grid.Row="1" Margin="20"
+                            ItemsSource="{Binding CurrentEntries}" SelectionMode="Single" SelectionChangedCommand="{Binding EntrySelectedCommand}" SelectedItem="{Binding SelectedEntry}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <controls:EntryRow/>
