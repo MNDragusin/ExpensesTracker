@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AppDataContext;
+namespace ExpensesTracker.DataContext;
 
 public static class ExpensesContextExtensions
 {
@@ -9,9 +9,8 @@ public static class ExpensesContextExtensions
     private const string KCloudOsxConnectionString = "Data Source=/Users/{userName}/Library/CloudStorage/OneDrive-Personal/_db/ExpensesTracker/_data/AppData.db";
     private const string KCloudWindowsConnectionString = "Data Source={path}\\_db\\ExpensesTracker\\_data\\Expenses.db";
     
-    public static IServiceCollection AddExpensesContext(this IServiceCollection services, string relativePath = "Data Source=..")
+    public static IServiceCollection AddExpensesContext(this IServiceCollection services, string dbPath = "Data Source=..\\AppData.db")
     {
-        string dbPath = Path.Combine(relativePath, "AppData.db");
         if(!CheckDbConnection(dbPath)){
             return services;
         }

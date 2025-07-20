@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using ExpensesTracker.Common.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace AppDataContext;
+namespace ExpensesTracker.DataContext;
 
-public class DataContext : IdentityDbContext
+public class DataContext : DbContext
 {
     public DataContext()
     {
@@ -28,7 +27,7 @@ public class DataContext : IdentityDbContext
             return;
         }
 
-        string path = Path.Combine("..", "AppData.db");
+        string path = Path.Combine("..\\..\\data", "AppData.db");
         optionsBuilder.UseSqlite($"Filename={path}");
     }
 }
