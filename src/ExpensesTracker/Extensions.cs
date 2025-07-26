@@ -5,7 +5,7 @@ namespace ExpensesTracker
 {
     public static class Extensions
     {
-        public static WalletEntry MapToEntity(this WalletEntryDto dto)
+        public static WalletEntry MapToEntry(this EntryDto dto)
         {
             return new WalletEntry
             {
@@ -17,33 +17,21 @@ namespace ExpensesTracker
                 CategoryId = dto.CategoryId
             };
         }
-
-        public static WalletEntryDto MapToDto(this WalletEntry entry)
+        
+        public static EntryDto MapToEntryDto(this WalletEntry entry)
         {
-            return new WalletEntryDto
+            return new EntryDto
             {
+                EntryId = entry.EntryId,
                 Date = entry.Date,
                 Amount = entry.Amount,
                 WalletId = entry.WalletId,
                 LabelId = entry.LabelId,
-                CategoryId = entry.CategoryId
+                CategoryId = entry.CategoryId,
             };
         }
 
-        public static Wallet MapToEntity(this WalletDto dto)
-        {
-            return new Wallet
-            {
-                Id = dto.Id,
-                OwnerId = null,
-                Name = dto.Name,
-                ColorCode = dto.ColorCode,
-                TotalAmount = dto.TotalAmount,
-                Entries = null
-            };
-        }
-
-        public static WalletDto MapToDto(this Wallet wallet)
+        public static WalletDto MapToWalletDto(this Wallet wallet)
         {
             return new WalletDto
             {
@@ -54,5 +42,60 @@ namespace ExpensesTracker
             };
         }
 
+        public static Wallet MapToWallet(this WalletDto dto, string ownerId)
+        {
+            return new Wallet
+            {
+                Id = dto.Id,
+                OwnerId = ownerId,
+                Name = dto.Name,
+                ColorCode = dto.ColorCode,
+                TotalAmount = dto.TotalAmount,
+                Entries = null
+            };
+        }
+
+        public static CategoryDto MapToCategoryDto(this Category category)
+        {
+            return new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                ColorCode = category.ColorCode
+            };
+        }
+        
+        public static Category MapToCategory(this CategoryDto dto, string ownerId)
+        {
+            return new Category
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                ColorCode = dto.ColorCode,
+                OwnerId = ownerId
+            };
+        }
+
+        public static LabelDto MapToLabelDto(this Label label)
+        {
+            return new LabelDto
+            {
+                Id = label.Id,
+                Name = label.Name,
+                ColorCode = label.ColorCode
+            };
+        }
+        
+        public static Label MapToLabel(this LabelDto dto, string ownerId)
+        {
+            return new Label
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                ColorCode = dto.ColorCode,
+                OwnerId = ownerId
+            };
+        }
+       
     }
 }

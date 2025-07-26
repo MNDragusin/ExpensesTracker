@@ -16,7 +16,7 @@ public static class ExpensesContextExtensions
         }
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlite($"Data Source={dbPath}");
+            options.UseSqlite(dbPath);
             options.LogTo(Console.WriteLine, new[]
             {
                 Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuting

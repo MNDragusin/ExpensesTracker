@@ -1,6 +1,6 @@
 ﻿namespace ExpensesTracker.Common.Dtos;
 
-public class WalletEntryDto
+public class EntryDto
 {
     public string? EntryId { get; set; } // Nullable to allow for new entries without an ID
     public DateOnly Date { get; set; }

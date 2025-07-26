@@ -3,7 +3,7 @@ using ExpensesTracker.Components;
 using ExpensesTracker.Components.Account;
 using ExpensesTracker.Data;
 using ExpensesTracker.DataContext;
-
+using ExpensesTracker.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +43,9 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 connectionString = builder.Configuration.GetConnectionString("DataConnection") ?? throw new InvalidOperationException("Connection string 'DataConnection' not found.");
 builder.Services.AddExpensesContext(connectionString);
+
+builder.Services.AddScoped<IWalletRepository, WalletServices>();
+
 builder.Services.AddControllers();
 
 var app = builder.Build();

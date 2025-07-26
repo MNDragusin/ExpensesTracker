@@ -1,14 +1,19 @@
 ﻿@page "/auth"
 
 @using ExpensesTracker.Client.Components
+@using ExpensesTracker.Client.ViewModels
+@using ExpensesTracker.Common.Dtos
 @using Microsoft.AspNetCore.Authorization
 
 @attribute [Authorize]
 @rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
-<PageTitle>Wallet: ##Template##</PageTitle>
+@implements IDisposable
+@inject WalletViewModel ViewModel
 
-<h1>Wallet: ##Template##</h1>
+<PageTitle>@ViewModel.WalletData.Name</PageTitle>
+
+<h1>@ViewModel.WalletData.Name</h1>
 
 <AuthorizeView>
     <div class="alert alert-info" role="alert">
@@ -19,7 +24,7 @@
     </div>
 
     <div class="btn-group" role="group" aria-label="edit buttons">
-        <button class="btn btn-primary">New Wallet</button>
+        <button class="btn btn-primary" @onclick="ShowNewWallet">New Wallet</button>
         <button class="btn btn-primary" @onclick="ShowAddNew">New Entry</button>
     </div>
     
@@ -45,61 +50,99 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach (var entry in ViewModel.WalletData.Entries)
+                {
+                    <tr style="text-align: center">
+                        <td>@entry.Date.ToShortDateString()</td>
+                        <td>@entry.Amount.ToString("C")</td>
+                        <td>@ViewModel.Categories.Find(c=>c.Id == entry.CategoryId).Name</td>
+                        <td>@ViewModel.Labels.Find(l=>l.Id == entry.LabelId).Name</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => ShowEditCategory()">Edit</button>
+                            <button class="btn btn-danger" @onclick="() => ViewModel.DeleteEntry(entry.EntryId)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            
             </tbody>
         </table>
     </div>
-
-    <Modal @ref="modal">
-        <Title>
-            <h5 class="modal-title">@modalTitle</h5>
-        </Title>
-        <Body>
-            @details
-        </Body>
-        <Footer>
-            <button type="button" class="btn btn-secondary" @onclick="() => modal.Close()">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-        </Footer>
-    </Modal>
+    <CategoryDetails @ref="walletModal" Title="@genericModalTitle" />
+    <ExpensesDetails @ref="expensesModal" Title="@entryModalTitle" Categories="@ViewModel.Categories" Labels="@ViewModel.Labels"/>
 </AuthorizeView>
 
 @code {
-    private Modal? modal { get; set; }
-    private RenderFragment? details { get; set; }
-    private string modalTitle { get; set; }
+
+    //modal data for wallet,category and label
+    private string genericModalTitle { get; set; }
+    private CategoryDetails walletModal { get; set; }
+
+    //modal for wallet entry
+    private string entryModalTitle { get; set; }
+    private ExpensesDetails expensesModal { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ViewModel.PropertyChanged += (_, __) => InvokeAsync(StateHasChanged);
+    }
+
     private void ShowAddNew()
     {
-        modalTitle = "Add new expense";
-        details = builder =>
-        {
-            builder.OpenComponent<ExpensesDetails>(0);
-            builder.CloseComponent();
-        };
-
-        modal.Open();
+        entryModalTitle = "New Entry";
+        expensesModal.OnSaveCallback += AddNewEntry;
+        expensesModal.ShowModal();
     }
 
     private void ShowEditCategory()
     {
-        modalTitle = "Edit Category";
-        details = builder =>
-        {
-            builder.OpenComponent<CategoryDetails>(0);
-            builder.CloseComponent();
-        };
-
-        modal.Open();
+        genericModalTitle = "New Category";
+        walletModal.OnSaveCallback += AddNewCategory;
+        walletModal.ShowModal();
     }
 
     private void ShowEditLabel()
     {
-        modalTitle = "Edit Label";
-        details = builder =>
-        {
-            builder.OpenComponent<CategoryDetails>(0);
-            builder.CloseComponent();
-        };
-
-        modal.Open();
+        genericModalTitle = "New Label";
+        walletModal.OnSaveCallback += AddNewLabel;
+        walletModal.ShowModal();
     }
+
+    private void ShowNewWallet()
+    {
+        genericModalTitle = "New Wallet";
+        walletModal.OnSaveCallback += AddNewWallet;
+        walletModal.ShowModal();
+
+    }
+
+    private void AddNewWallet(BaseDto dto)
+    {
+        walletModal.OnSaveCallback -= AddNewWallet;
+        ViewModel.CreateWallet(dto);
+    }
+
+    private void AddNewCategory(BaseDto dto)
+    {
+        walletModal.OnSaveCallback -= AddNewCategory;
+        ViewModel.CreateCategory(dto);
+    }
+
+    private void AddNewLabel(BaseDto dto)
+    {
+        walletModal.OnSaveCallback -= AddNewLabel;
+        ViewModel.CreateLabel(dto);
+    }
+
+    private void AddNewEntry(EntryDto entry)
+    {
+        expensesModal.OnSaveCallback -= AddNewEntry;
+        ViewModel.CreateEntry(entry);
+    }
+
+    public void Dispose()
+    {
+        ViewModel.PropertyChanged -= (_, __) => InvokeAsync(StateHasChanged);
+    }
+
 }

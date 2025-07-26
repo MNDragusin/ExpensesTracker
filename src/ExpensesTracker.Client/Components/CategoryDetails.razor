@@ -1,15 +1,56 @@
-﻿@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+﻿@using ExpensesTracker.Common.Dtos
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
-<div class="form-group">
-    <label for="date">Name</label>
-    <input type="text" class="form-control" id="textName" />
-</div>
-<div class="form-group">
-    <label for="date">Color</label>
-    <input type="color" class="form-control" id="color" />
-</div>
+<EditForm Model="dataModel" OnValidSubmit="OnSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <Modal @ref="modal">
+        <Title>
+            <h5 class="modal-title">@Title</h5>
+        </Title>
+        <Body>
+            <div class="form-group">
+                <label for="Name">Name</label>
+                <input type="text" class="form-control" id="Name" @bind-value="dataModel.Name"/>
+            </div>
+            <div class="form-group">
+                <label for="color">Color</label>
+                <input type="color" class="form-control" id="color" @bind-value="dataModel.ColorCode"/>
+            </div>
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </Footer>
+    </Modal>
+</EditForm>
 
 
 @code {
+    
+    [Parameter]
+    public Action<BaseDto> OnSaveCallback { get; set; }
 
+    [Parameter] 
+    public string Title { get; set; }
+    
+    private Modal modal;
+    private BaseDto dataModel = new();
+
+    public void ShowModal()
+    {
+        modal.Open();
+    }
+
+    public void CloseModal()
+    {
+        dataModel = new BaseDto();
+        modal.Close();
+    }
+
+    private void OnSubmit()
+    {
+        OnSaveCallback?.Invoke(dataModel);
+        modal.Close();
+    }
 }
